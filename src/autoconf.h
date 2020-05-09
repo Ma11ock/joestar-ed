@@ -74,6 +74,9 @@
 /* Define to 1 if you have the `getwd' function. */
 #define HAVE_GETWD 1
 
+/* If we have hypot() */
+#define HAVE_HYPOT 1
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 /* #undef HAVE_INTTYPES_H */
 
@@ -196,6 +199,9 @@
    zero-length file name argument. */
 /* #undef HAVE_STAT_EMPTY_STRING_BUG */
 
+/* Define to 1 if you have the <stddef.h> header file. */
+#define HAVE_STDDEF_H 1
+
 /* Define to 1 if you have the <stdint.h> header file. */
 /* #undef HAVE_STDINT_H */
 
@@ -288,9 +294,6 @@
 /* Define to 1 if `fork' works. */
 #define HAVE_WORKING_FORK 1
 
-/* Define if isblank() works with expressions with side effects */
-#define HAVE_WORKING_ISBLANK 1
-
 /* Define to 1 if `vfork' works. */
 #define HAVE_WORKING_VFORK 1
 
@@ -304,9 +307,6 @@
    slash. */
 #define LSTAT_FOLLOWS_SLASHED_SYMLINK 1
 
-/* Define if we have to reinstall signal handler when invoked */
-/* #undef NEED_TO_REINSTALL_SIGNAL */
-
 /* Name of package */
 #define PACKAGE "joe"
 
@@ -317,7 +317,7 @@
 #define PACKAGE_NAME "joe"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "joe 4.0"
+#define PACKAGE_STRING "joe 4.6"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "joe"
@@ -326,16 +326,13 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "4.0"
+#define PACKAGE_VERSION "4.6"
 
 /* Define to 1 if the C compiler supports function prototypes. */
 #define PROTOTYPES 1
 
 /* Define as the return type of signal handlers (`int' or `void'). */
 #define RETSIGTYPE void
-
-/* Define if setpgrp() takes no arguments */
-#define SETPGRP_VOID 1
 
 /* The size of `char', as computed by sizeof. */
 #define SIZEOF_CHAR 1
@@ -365,7 +362,7 @@
 #define TERMINFO 1
 
 /* Version number of package */
-#define VERSION "4.0"
+#define VERSION "4.6"
 
 /* Enable large inode numbers on Mac OS X 10.5.  */
 #ifndef _DARWIN_USE_64_BIT_INODE

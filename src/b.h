@@ -5,21 +5,28 @@
  *
  *	This file is part of JOE (Joe's Own Editor)
  */
-#ifndef _JOE_B_H
-#define _JOE_B_H 1
 
-/* A buffer is made up of a doubly-linked list of gap buffer.  These are the
- * buffer headers.  The buffers themselves can be swapped out.  A buffer with
- * point referring to it is guaranteed to be swapped in.
+/* A buffer is made up of a doubly-linked list of gap buffers.  Each gap buffer has a
+ * a header.  The buffers themselves can be swapped out.  A gap buffer with
+ * a pointer referring to it is guaranteed to be swapped in.
  */
 
 struct header {
 	LINK(H)	link;		/* Doubly-linked list of gap buffer headers */
-	long	seg;		/* Swap file offset to gap buffer */
-	int	hole;		/* Offset to gap */
-	int	ehole;		/* Offset to after gap */
-	int	nlines;		/* No. '\n's in this buffer */
+	off_t	seg;		/* Swap file offset to gap buffer */
+	short	hole;		/* Offset to gap */
+	short	ehole;		/* Offset to after gap */
+	short	nlines;		/* No. '\n's in this buffer */
+	short	extra;		/* Unused */
 };
+
+/* It's a good idea to optimize the size of struct header since there is a header
+ * for each page of loaded data.
+ *
+ * 32-bit ptr, 32-bit off: sizeof(H) == 20 bytes
+ * 32-bit ptr, 64-bit off: sizeof(H) == 24 bytes
+ * 64-bit ptr, 64-bit off: sizeof(H) == 32 bytes
+ */
 
 /* A pointer to some location within a buffer.  After an insert or delete,
  * all of the pointers following the insertion or deletion point are
@@ -29,55 +36,63 @@ struct point {
 	LINK(P)	link;		/* Doubly-linked list of pointers for a particular buffer */
 
 	B	*b;		/* Buffer */
-	int	ofst;		/* Gap buffer offset */
-	unsigned char	*ptr;	/* Gap buffer address */
+	short	ofst;		/* Gap buffer offset */
+	char	*ptr;		/* Gap buffer address */
 	H	*hdr;		/* Gap buffer header */
 
 	off_t	byte;		/* Buffer byte offset */
-	long	line;		/* Line number */
-	long	col;		/* current column */
-	long	xcol;		/* cursor column (can be different from actual column) */
+	off_t	line;		/* Line number */
+	off_t	col;		/* current column */
+	off_t	xcol;		/* cursor column (can be different from actual column) */
 	int	valcol;		/* bool: is col valid? */
 	int	end;		/* set if this is end of file pointer */
-	int	attr;		/* current ansi attribute */
+	int	attr;		/* current ANSI attribute */
 	int	valattr;	/* set if attr is still valid */
 
 	P	**owner;	/* owner of this pointer.  owner gets cleared if pointer is deleted. */
-	unsigned char *tracker;	/* Name of function who pdup()ed me */
+	const char *tracker;	/* Name of function who pdup()ed me */
 };
 
 /* Options: both BWs and Bs have one of these */
 
+struct options_match {
+	struct options_match *next;
+	const char	*name_regex; /* File name regex */
+	const char	*contents_regex; /* File contents regex */
+	struct regcomp	*r_contents_regex; /* Compiled version of context_regex */
+};
+
 struct options {
 	OPTIONS	*next;
-	unsigned char	*name_regex;
-	unsigned char	*contents_regex;
+	const char *ftype; /* Name of this set of options */
+	struct options_match *match; /* List of matching criteria */
 	int	overtype;
-	int	lmargin;
-	int	rmargin;
+	off_t	lmargin;
+	off_t	rmargin;
 	int	autoindent;
 	int	wordwrap;
 	int	nobackup;
-	int	tab;
+	off_t	tab;
 	int	indentc;
-	int	istep;
-	unsigned char	*context;
-	unsigned char	*lmsg;
-	unsigned char	*rmsg;
-	unsigned char	*smsg;
-	unsigned char	*zmsg;
+	off_t	istep;
+	const char	*context;
+	const char	*lmsg;
+	const char	*rmsg;
+	const char	*smsg;
+	const char	*zmsg;
 	int	linums;
+	int	hiline;
 	int	readonly;
 	int	french;
 	int	flowed;
 	int	spaces;
 	int	crlf;
 	int	highlight;	/* Set to enable highlighting */
-	unsigned char *syntax_name;	/* Name of syntax to use */
+	const char *syntax_name;	/* Name of syntax to use */
 	struct high_syntax *syntax;	/* Syntax for highlighting (load_syntax() from syntax_name happens in setopt()) */
-	unsigned char *map_name;	/* Name of character set */
+	const char *map_name;	/* Name of character set */
 	struct charmap *charmap;	/* Character set */
-	unsigned char *language;	/* Language of this buffer (for spell) */
+	const char *language;	/* Language of this buffer (for spell) */
 	int	smarthome;	/* Set for smart home key */
 	int	indentfirst;	/* Smart home goes to indentation point first */
 	int	smartbacks;	/* Set for smart backspace key */
@@ -93,10 +108,11 @@ struct options {
 	int	semi_comment;	/* Ignore text after ; comments */
 	int	tex_comment;	/* Ignore text after % comments */
 	int	hex;		/* Hex edit mode */
-	int	ansi;		/* Hide ansi sequences mode */
-	unsigned char *text_delimiters;	/* Define word delimiters */
-	unsigned char *cpara;	/* Characters which can indent paragraphcs */
-	unsigned char *cnotpara;/* Characters which begin non-paragraph lines */
+	int	ansi;		/* Hide ANSI sequences mode */
+	int	title;		/* Enable status line context display */
+	const char *text_delimiters;	/* Define word delimiters */
+	const char *cpara;	/* Characters which can indent paragraphs */
+	const char *cnotpara;/* Characters which begin non-paragraph lines */
 	MACRO	*mnew;		/* Macro to execute for new files */
 	MACRO	*mold;		/* Macro to execute for existing files */
 	MACRO	*msnew;		/* Macro to execute before saving new files */
@@ -110,24 +126,24 @@ struct buffer {
 	LINK(B)	link;		/* Doubly-linked list of all buffers */
 	P	*bof;		/* Beginning of file pointer */
 	P	*eof;		/* End of file pointer */
-	unsigned char	*name;	/* File name */
+	char *name;	/* File name */
 	int locked;		/* Set if we created a lock for this file */
 	int ignored_lock;	/* Set if we didn't create a lock and we don't care (locked set in this case) */
 	int didfirst;		/* Set after user attempted first change */
-	long    mod_time;	/* Last modification time for file */
-	long	check_time;	/* Last time we checked the file on disk */
+	time_t	mod_time;	/* Last modification time for file */
+	time_t	check_time;	/* Last time we checked the file on disk */
 	int	gave_notice;	/* Set if we already gave file changed notice for this file */
 	int	orphan;		/* Set if buffer is orphaned: refcount is bumped up by one in this case */
 	int	count;		/* Reference count.  Buffer is deleted if brm decrements count to 0 */
 	int	changed;
 	int	backup;
-	void	*undo;
+	UNDO	*undo;
 	P	*marks[11];	/* Bookmarks */
 	OPTIONS	o;		/* Options */
 	P	*oldcur;	/* Last cursor position before orphaning */
 	P	*oldtop;	/* Last top screen position before orphaning */
 	P	*err;		/* Last error line */
-	unsigned char *current_dir;
+	char *current_dir;
 	int shell_flag;		/* Set if last cursor position is same as vt cursor: if it is we keep it up to date */
 	int	rdonly;		/* Set for read-only */
 	int	internal;	/* Set for internal buffers */
@@ -137,34 +153,33 @@ struct buffer {
 	int	out;		/* fd to write to process */
 	VT	*vt;		/* video terminal emulator */
 	struct lattr_db *db;	/* Linked list of line attribute databases */
-	void (*parseone)(struct charmap *map,unsigned char *s,unsigned char **rtn_name,
-	                 long *rtn_line);
+	void (*parseone)(struct charmap *map,const char *s,char **rtn_name,
+	                 off_t *rtn_line);
 	                        /* Error parser for this buffer */
 };
 
 extern B bufs;
 
 /* 31744 */
-extern unsigned char stdbuf[stdsiz];	/* Convenient global buffer */
+extern char stdbuf[stdsiz];	/* Convenient global buffer */
 
 extern int force;		/* Set to have final '\n' added to file */
-extern int tabwidth;		/* Default tab width */
 
 extern VFILE *vmem;		/* Virtual memory file used for buffer system */
 
-extern unsigned char *msgs[];	/* File access status messages */
+extern const char *msgs[];	/* File access status messages */
 
 B *bmk(B *prop);
 void brm(B *b);
 void brmall();
 
-B *bfind(unsigned char *s);
-B *bfind_scratch(unsigned char *s);
-B *bcheck_loaded(unsigned char *s);
-B *bfind_reload(unsigned char *s);
+B *bfind(const char *s);
+B *bfind_scratch(const char *s);
+B *bcheck_loaded(const char *s);
+B *bfind_reload(const char *s);
 
-P *pdup(P *p, unsigned char *tr);
-P *pdupown(P *p, P **o, unsigned char *tr);
+P *pdup(P *p, const char *tr);
+P *pdupown(P *p, P **o, const char *tr);
 P *poffline(P *p);
 P *ponline(P *p);
 B *bonline(B *b);
@@ -192,7 +207,7 @@ int piseow(P *p);
 int pisblank(P *p);
 int piseolblank(P *p);
 
-long pisindent(P *p);
+off_t pisindent(P *p);
 int pispure(P *p,int c);
 
 int pnext(P *p);
@@ -204,27 +219,27 @@ int prgetb(P *p);
 int pgetc(P *p);
 int prgetc(P *p);
 
-P *pgoto(P *p, long int loc);
-P *pfwrd(P *p, long int n);
-P *pbkwd(P *p, long int n);
+P *pgoto(P *p, off_t loc);
+P *pfwrd(P *p, off_t n);
+P *pbkwd(P *p, off_t n);
 
 P *pfcol(P *p);
 
 P *pnextl(P *p);
 P *pprevl(P *p);
 
-P *pline(P *p, long int line);
+P *pline(P *p, off_t line);
 
-P *pcolwse(P *p, long int goalcol);
-P *pcol(P *p, long int goalcol);
-P *pcoli(P *p, long int goalcol);
+P *pcolwse(P *p, off_t goalcol);
+P *pcol(P *p, off_t goalcol);
+P *pcoli(P *p, off_t goalcol);
 void pbackws(P *p);
-void pfill(P *p, long int to, int usetabs);
+void pfill(P *p, off_t to, int usetabs);
 
-P *pfind(P *p, unsigned char *s, int len);
-P *pifind(P *p, unsigned char *s, int len);
-P *prfind(P *p, unsigned char *s, int len);
-P *prifind(P *p, unsigned char *s, int len);
+P *pfind(P *p, const char *s, ptrdiff_t len);
+P *pifind(P *p, const char *s, ptrdiff_t len);
+P *prfind(P *p, const char *s, ptrdiff_t len);
+P *prifind(P *p, const char *s, ptrdiff_t len);
 
 /* copy text between 'from' and 'to' into new buffer */
 B *bcpy(P *from, P *to);	
@@ -236,16 +251,19 @@ void bdel(P *from, P *to);
 /* insert buffer 'b' into another at 'p' */
 P *binsb(P *p, B *b);
 /* insert a block 'blk' of size 'amnt' into buffer at 'p' */
-P *binsm(P *p, unsigned char *blk, int amnt); 
+P *binsm(P *p, const char *blk, ptrdiff_t amnt); 
+
+/* Quoted insert.. */
+P *binsmq(P *p, const char *blk, ptrdiff_t amnt); 
 
 /* insert character 'c' into buffer at 'p' */
 P *binsc(P *p, int c);
 
 /* insert byte 'c' into buffer at at 'p' */
-P *binsbyte(P *p, unsigned char c);
+P *binsbyte(P *p, char c);
 
 /* insert zero term. string 's' into buffer at 'p' */
-P *binss(P *p, unsigned char *s);
+P *binss(P *p, const char *s);
 
 /* B *bload(char *s);
  * Load a file into a new buffer
@@ -256,17 +274,18 @@ P *binss(P *p, unsigned char *s);
  * -3 for seek error
  * -4 for open error
  */
-B *bload(unsigned char *s);
-B *bread(int fi, long int max);
-B *bfind(unsigned char *s);
+B *bload(const char *s);
+B *bread(int fi, off_t max);
 B *borphan(void);
 
 /* Save 'size' bytes beginning at 'p' into file with name in 's' */
-int bsave(P *p, unsigned char *s, off_t size,int flag);
+int bsave(P *p, const char *s, off_t size,int flag);
 int bsavefd(P *p, int fd, off_t size);
 
-unsigned char *parsens(unsigned char *s, off_t *skip, off_t *amnt);
-unsigned char *canonical(unsigned char *s);
+char *parsens(const char *s, off_t *skip, off_t *amnt);
+
+char *canonical(char *s, int flags);
+#define CANFLAG_NORESTART 1 /* Support path restart feature */
 
 /* Get byte at pointer or return NO_MORE_DATA if pointer is at end of buffer */
 int brc(P *p);
@@ -275,19 +294,19 @@ int brc(P *p);
 int brch(P *p);
 
 /* Copy 'size' bytes from a buffer beginning at p into block 'blk' */
-unsigned char *brmem(P *p, unsigned char *blk, int size);
+char *brmem(P *p, char *blk, ptrdiff_t size);
 
 /* Copy 'size' bytes from a buffer beginning at p into a zero-terminated
  * C-string in an malloc block.
  */
-unsigned char *brs(P *p, int size);
+char *brs(P *p, ptrdiff_t size);
 
 /* Copy 'size' bytes from a buffer beginning at p into a variable length string. */
-unsigned char *brvs(P *p, int size);
+char *brvs(P *p, ptrdiff_t size);
 
 /* Copy line into buffer.  Maximum of size bytes will be copied.  Buffer needs
    to be one bigger for NIL */
-unsigned char *brzs(P *p, unsigned char *buf, int size);
+char *brzs(P *p, char *buf, ptrdiff_t size);
 
 B *bnext(void);
 B *bafter(B *b);
@@ -295,15 +314,15 @@ B *bprev(void);
 
 extern int berror;	/* bload error status code (use msgs[-berror] to get message) */
 
-unsigned char **getbufs(void);
+char **getbufs(void);
 
-int lock_it(unsigned char *path,unsigned char *buf);
-void unlock_it(unsigned char *path);
+int lock_it(const char *path,char *buf);
+void unlock_it(const char *path);
 int plain_file(B *b);
 int check_mod(B *b);
-int file_exists(unsigned char *path);
+int file_exists(const char *path);
 
-int udebug_joe(BW *bw);
+int udebug_joe(W *w, int k);
 
 extern int guesscrlf; /* Try to guess line ending when set */
 extern int guessindent; /* Try to guess indent character and step when set */
@@ -315,10 +334,10 @@ void set_file_pos_orphaned();
 
 void breplace(B *b, B *n);
 
-unsigned char *dequote(unsigned char *);
+char *dequote(const char *);
 
-#define ANSI_BIT 0x40000000
-int ansi_code(unsigned char *s);
-unsigned char *ansi_string(int code);
+#define ANSI_BIT (int)(0x80000000)
+int ansi_code(char *s);
+char *ansi_string(int code);
 
-#endif
+extern int guess_utf16;

@@ -15,44 +15,14 @@
  on the command line.  Also the NOXON, LINES, COLUMNS, DOPADDING and BAUD
  options can be specified in environment variables):
 
- Override colors of lexical classes specified in syntax files:
- Put each color override you want in the first column.
-
- Valid colors:
-   bold inverse blink dim underline italic
-   white cyan magenta blue yellow green red black
-   bg_white bg_cyan bg_magenta bg_blue bg_yellow bg_green bg_red bg_black
-
- Override all instances of class Idle:
-   =Idle red
-
- Override Idle only for c syntax file:
-   =c.Idle red
-
- The following list is from c.jsf.  Look at other syntax files for more classes.
-
- =Idle
- =Bad        bold red
- =Preproc    blue
- =Define     bold blue
- =IncLocal   cyan
- =IncSystem  bold cyan
- =Constant   cyan
- =Escape     bold cyan
- =Type       bold
- =Keyword    bold
- =CppKeyword bold
- =Brace      magenta
- =Control
-
- Put each option you want set in the first column:
-
  -option	Sets the option
  --option	Clears the option
 
  -help_is_utf8	Set if help text is in UTF-8 format.  Leave clear if it's a raw 8-bit format.
 
  -mid		Cursor is recentered when scrolling is necessary
+ -left nn	Amount to jump left when scrolling is necessary (-1 for 1/4 width)
+ -right nn	Amount to jump right when scrolling is necessary (-1 for 1/4 width)
  -marking	Text between ^KB and cursor is highlighted (use with -lightoff)
  -asis		Characters 128 - 255 shown as-is
  -force		Force final newline when files are saved
@@ -96,7 +66,7 @@
  -lines nnn	Set no. screen lines
  -baud nnn	Set baud rate for terminal optimizations
  -columns nnn	Set no. screen columns
- -help		Start with help on
+ -helpon	Start with help on
  -skiptop nnn	Don't use top nnn lines of the screen
 
 -notite         Don't send terminal initialization and termination strings: prevents
@@ -119,6 +89,8 @@
 -guess_non_utf8	Allow guess of non-UTF-8 file encoding in a UTF-8 locale.
 
  -guess_utf8	Allow guess of UTF-8 file encoding in non-UTF-8 locale.
+
+-guess_utf16	Allow guess of UTF-16 encoding
 
 -guess_crlf     Automatically detect MS-DOS files and set -crlf appropriately
 
@@ -149,28 +121,27 @@
  -joexterm	If you are using Joe's modified Xterm, which makes -mouse
 		mode work better (cut & paste work transparently).
 
+-brpaste	When JOE starts, send command to the terminal emulator that
+		enables "bracketed paste mode" (but only if the terminal
+		seems to have the ANSI command set).  In this mode, text
+		pasted into the window is bracketed with ESC [ 2 0 0 ~ and
+		ESC [ 2 0 1 ~.
+
+-pastehack	If keyboard input comes in as one block assume it's a mouse
+		paste and disable autoindent and wordwrap.
+
  -square	Rectangular block mode
 
- -text_color color
-		Set color for text.
- -status_color color
-		Set color for status bar.
- -help_color color
-		Set color for help.
- -menu_color color
-		Set color for menus.
- -prompt_color color
-		Set color for prompts.
- -msg_color color
-		Set color for messages.
-
-		For example: -text_color bg_blue+white
-		Sets the background color to blue and foreground color to white.
+ -colors scheme
+		Set the default color scheme
 
 -restore	Restore previous cursor position when files are opened
 
  -search_prompting
 		Search prompts with previous search request.
+
+ -regex		Search uses standard regular expression format (otherwise it uses
+		JOE format where all special characters have to be escaped).
 
  Status line definition strings.  -lmsg defines the left-justified string and
  -rmsg defines the right-justified string.  The first character of -rmsg is
@@ -221,6 +192,11 @@
 -rmsg  %S Row %4r Col %3c %t  Ctrl-J for help
 -smsg ** Line %r Col %c Offset %o(0x%O) %e %a(0x%A) Width %w ** 
 -zmsg ** Line %r Col %c Offset %o(0x%O) ** 
+-xmsg \i Joe's Own Editor %v (%b) ** Type \bCtrl-K Q\b to exit or \bCtrl-J\b for help **\i
+
+ Key sequence hints which are displayed in various prompts.
+-aborthint ^C
+-helphint ^J
 
 
  SECOND SECTION: File name dependant local option settings:
@@ -299,6 +275,8 @@
 				selects how much is inserted.
 
 	-linums			Enable line numbers on each line
+
+	-hiline			Highlight current line
 
 	-rdonly			File is read-only
 
@@ -387,13 +365,17 @@ menu,"indent",rtn	= Indent select
 mode,"highlight",rtn	H Highlighting %Zhighlight%
 mode,"crlf",rtn	Z CR-LF/MS-DOS %Zcrlf%
 mode,"linums",rtn	N Line numbers %Zlinums%
+mode,"hiline",rtn	U Highlight line %Zhiline%
 mode,"beep",rtn	B Beep %Zbeep%
 mode,"rdonly",rtn	O Read only %Zrdonly%
 mode,"syntax",rtn	Y Syntax
+mode,"colors",rtn	S Color scheme
 mode,"encoding",rtn	E Encoding
 mode,"asis",rtn	% % Meta chars as-is
 mode,"language",rtn	V Language
 mode,"picture",rtn	P picture %Zpicture%
+mode,"type",rtn		F File type [%Ztype%]
+mode,"title",rtn	C Context %Ztitle%
 menu,"more-options",rtn	  % % More options...
 
 :defmenu more-options menu,"root",rtn
@@ -453,6 +435,7 @@ mode,"guess_crlf",rtn	% % Auto detect CR-LF %Zguess_crlf%
 mode,"guess_indent",rtn	% % Guess indent %Zguess_indent%
 mode,"guess_non_utf8",rtn	% % Guess non-UTF-8 %Zguess_non_utf8%
 mode,"guess_utf8",rtn	% % Guess UTF-8 %Zguess_utf8%
+mode,"guess_utf16",rtn	% % Guess UTF-16 %Zguess_utf16%
 mode,"force",rtn	% % Force last NL %Zforce%
 mode,"nobackup",rtn	% % No backup %Znobackup%
 
@@ -474,6 +457,8 @@ mode,"backpath",rtn	% % Path to backup files %Zbackpath%
 :defmenu cursor menu,"more-options",rtn
 mode,"pg",rtn	% % No. PgUp/PgDn lines %Zpg%
 mode,"mid",rtn	C Center on scroll %Zmid%
+mode,"left",rtn	L Columns to scroll left %Zleft%
+mode,"right",rtn R Columns to scroll right %Zright%
 mode,"floatmouse",rtn	% % Click past end %Zfloatmouse%
 mode,"rtbutton",rtn	% % Right button %Zrtbutton%
 
@@ -538,31 +523,39 @@ mode,"spaces",rtn	% % No tabs %Zspaces%
 }
 
 {Search
-\i   Help Screen    \|turn off with ^J     prev. screen ^[,    next screen ^[.     \i
-\i \iSpecial search sequences:                                                    \|\i \i
-\i \i    \\^  \\$  matches beg./end of line      \\?     match any single char       \|\i \i
-\i \i    \\<  \\>  matches beg./end of word      \\*     match 0 or more chars       \|\i \i
-\i \i    \\c      matches balanced C expression \\\\     matches a \\                 \|\i \i
-\i \i    \\[..]   matches one of a set          \\n     matches a newline           \|\i \i
-\i \i    \\+      matches 0 or more of the character which follows the \\+          \|\i \i
-\i \iSpecial replace sequences:                                                   \|\i \i
-\i \i    \\&      replaced with text which matched search string                   \|\i \i
-\i \i    \\0 - 9  replaced with text which matched Nth \\*, \\?, \\c, \\+, or \\[..]    \|\i \i
-\i \i    \\\\      replaced with \\               \\n     replaced with newline       \|\i \i
+\i   Help Screen    \|turn off with ^KH    prev. screen ^[,    next screen ^[.     \i
+\i \iSearch sequences:                                                            \|\i \i
+\i \i    \\^  \\$  matches beg./end of line       \\.     match any single char      \|\i \i
+\i \i    \\<  \\>  matches beg./end of word       \\!     match char or expression   \|\i \i
+\i \i    \\(  \\)  grouping                       \\|     match left or right         \|\i \i
+\i \i    \\[a-z]  matches one of a set                                             \|\i \i
+\i \i    \\{1,3}  match 1 - 3 occurrences        \\?     match 0 or 1 occurrence     \|\i \i
+\i \i    \\+      match 1 or more occurrences    \\*     match 0 or more occurrences \|\i \i
+\i \iReplace sequences:                                                           \|\i \i
+\i \i    \\&      replaced with entire match     \\1 - 9 replaced with Nth group   \|\i \i
+\i \i    \\u \\l   convert next to upper/lower    \\U \\L  case convert until \\E     \|\i \i
+}
+
+{Escape sequences
+\i   Help Screen    \|turn off with ^KH    prev. screen ^[,    next screen ^[.     \i
+\i \iEscape sequences: \\x{10fff}  Unicode code point   \\p{Ll}  Unicode category \|\i \i
+\i \i    \\i / \\I  Identifier start      \\t  tab          \\e  escape               \|\i \i
+\i \i    \\c / \\C  Identifier continue   \\n  newline      \\r  carriage return      \|\i \i
+\i \i    \\d / \\D  Digit / Not a digit   \\b  backspace  \\xFF  hex character        \|\i \i
+\i \i    \\w / \\W  Word / Not a word     \\a  alert      \\377  octal character      \|\i \i
+\i \i    \\s / \\S  Space / Not a space   \\f  formfeed     \\\\  backslash            \|\i \i
 }
 
 {SearchOptions
 \i   Help Screen    \|turn off with ^KH    prev. screen ^[,    next screen ^[.     \i
 \i \iSearch options:                                                              \|\i \i
-\i \i   r Replace                                                                 \|\i \i
-\i \i   k Restrict search to highlighted block, which can be rectangular          \|\i \i
-\i \i   b Search backward instead of forward                                      \|\i \i
-\i \i   i Ignore case                                                             \|\i \i
-\i \i   a Search across all loaded files                                          \|\i \i
-\i \i   e Search across all files in Grep or Compile error list                   \|\i \i
-\i \i   w Wrap to beginning of file for this search                               \|\i \i
-\i \i   n Do not wrap to beginning of file for this search                        \|\i \i
-\i \i   nnn Perform exaclty nnn replacements                                      \|\i \i
+\i \i     r Replace      k Restrict search to highlighted block                   \|\i \i
+\i \i     i Ignore case  b Search backwards instead of forwards                   \|\i \i
+\i \i                    a Search across all loaded files                         \|\i \i
+\i \i                    e Search across all files in Grep or Compile error list  \|\i \i
+\i \i w / n  Allow / prevent wrap to start of file                                \|\i \i
+\i \i x / y  Search text is standard format / JOE format regular expression       \|\i \i
+\i \i   nnn  Perform exactly nnn replacements                                     \|\i \i
 }
 
 {Math
@@ -672,7 +665,7 @@ mode,"spaces",rtn	% % No tabs %Zspaces%
  Macros may cross lines if they end with ,
 
 :windows		Bindings common to all windows
-type		^@ TO ÿ
+type		U+0 TO U+10FFFF
 abort		^K Q
 abort		^K ^Q
 abort		^K q
@@ -726,6 +719,8 @@ defm2drag	M2DRAG		Select a region of words
 defm3down	M3DOWN		Select the line at the mouse location
 defm3up		M3UP
 defm3drag	M3DRAG		Select a region of lines
+defmiddleup	MIDDLEUP
+defmiddledown	MIDDLEDOWN	Insert text
 
 xtmouse		^[ [ M		Introduces an xterm mouse event
 extmouse	^[ [ <		Introduces an extended xterm mouse event
@@ -775,7 +770,7 @@ extmouse	^[ [ <		Introduces an extended xterm mouse event
 :def shell_gparse gparse
 :def shell_release release
 :def shell_math maths
-:def shell_typemath txt,math,"ins",rtn,rtn,txt,"",rtn
+:def shell_typemath txt,math,"ins",rtn,rtn,txt,"\r",rtn
 :def shell_rtn rtn
 :def shell_edit edit
 :def shell_dellin dellin
@@ -792,6 +787,7 @@ extmouse	^[ [ <		Introduces an extended xterm mouse event
 
 paste			^[ ] 5 2 ;		Base64 paste (obsolete)
 brpaste			^[ [ 2 0 0 ~		Bracketed paste
+brpaste_done		^[ [ 2 0 1 ~		Bracketed paste done
 
 insc			^[ [ 2 ~
 insc			^[ [ L			SCO
@@ -856,9 +852,9 @@ quote		^P		Quote Ctrl chars
 backs		^?		Backspace
 backs		^H
 bknd		^K '		Shell window
-bkwdc		^Q H ^@ TO ÿ
-bkwdc		^Q ^H ^@ TO ÿ
-bkwdc		^Q h ^@ TO ÿ
+bkwdc		^Q H U+0 TO U+10FFFF
+bkwdc		^Q ^H U+0 TO U+10FFFF
+bkwdc		^Q h U+0 TO U+10FFFF
 blkcpy		^K C		Copy marked block
 blkcpy		^K ^C
 blkcpy		^K c
@@ -939,9 +935,9 @@ qrepl		^Q a
 filt		^K /		Filter block
 fnext		^L		Find next
 format		^B		Format paragraph
-fwrdc		^Q G ^@ TO ÿ
-fwrdc		^Q ^G ^@ TO ÿ
-fwrdc		^Q g ^@ TO ÿ
+fwrdc		^Q G U+0 TO U+10FFFF
+fwrdc		^Q ^G U+0 TO U+10FFFF
+fwrdc		^Q g U+0 TO U+10FFFF
 gomark		^Q 0 TO 9
 groww		^K G		Grow window
 groww		^K ^G
@@ -1130,18 +1126,18 @@ defm2down	M2DOWN		Hits return key
 :inherit windows
 
 :querya			Single-key query window for quoting
-type		^@ TO ÿ
+type		U+0 TO U+10FFFF
 
 :querysr		Search & replace query window
-type		^@ TO ÿ
+type		U+0 TO U+10FFFF
 
 :shell			Input to shell windows
 :inherit main
 ""		^C		Abort
 ""		^D		Eof
-"	"	^I		Tab
+"\t"		^I		Tab
 ""		^H		Backspace
-""		^M		Return
+"\r"		^M		Return
 ""		^?		Backspace
 
 :vtshell		Input to ANSI shell windows
@@ -1158,7 +1154,7 @@ type		^@ TO ÿ
 ""		^C		Abort
 ""		^D		Eof
 ""		^E		EOL for bash
-"	"	^I		Tab
+"\t"		^I		Tab
 ""		^H		Backspace
-""		^M		Return
+"\r"		^M		Return
 ""		^?		Backspace

@@ -12,19 +12,19 @@
 int bg_prompt;
 int nocurdir;
 
-unsigned char *get_cd(W *w)
+char *get_cd(W *w)
 {
 	BW *bw;
 	w = w->main;
-	bw = w->object;
+	bw = (BW *)w->object;
 	return bw->b->current_dir;
 }
 
-void set_current_dir(BW *bw, unsigned char *s,int simp)
+void set_current_dir(BW *bw, char *s,int simp)
 {
 	W *w = bw->parent->main;
 	B *b;
-	bw = w->object;
+	bw = (BW *)w->object;
 	b = bw->b;
 	
 	if (s[0]=='!' || (s[0]=='>' && s[1]=='>'))
@@ -33,7 +33,7 @@ void set_current_dir(BW *bw, unsigned char *s,int simp)
 	if (s) {
 		b->current_dir=dirprt(s);
 		if (simp) {
-			unsigned char *tmp = simplify_prefix(b->current_dir);
+			char *tmp = simplify_prefix(b->current_dir);
 			vsrm(b->current_dir);
 			b->current_dir = tmp;
 		}
@@ -42,9 +42,9 @@ void set_current_dir(BW *bw, unsigned char *s,int simp)
 		b->current_dir = 0;
 }
 
-static void disppw(BW *bw, int flg)
+static void disppw(W *w, int flg)
 {
-	W *w = bw->parent;
+	BW *bw = (BW *)w->object;
 	PW *pw = (PW *) bw->object;
 
 	if (!flg) {
@@ -67,25 +67,25 @@ static void disppw(BW *bw, int flg)
 			pw->promptofst = pw->promptlen;
 			bw->offset = piscol(bw->cursor) - (w->w - 1);
 		} else {
-			pw->promptofst = pw->promptlen - (w->w - piscol(bw->cursor) - 1);
+			pw->promptofst = pw->promptlen - TO_DIFF_OK((w->w - piscol(bw->cursor) - 1));
 			bw->offset = piscol(bw->cursor) - (w->w - (pw->promptlen - pw->promptofst) - 1);
 		}
 	}
 
 	/* Set cursor position */
-	w->curx = piscol(bw->cursor) - bw->offset + pw->promptlen - pw->promptofst;
+	w->curx = TO_DIFF_OK(piscol(bw->cursor) - bw->offset + pw->promptlen - pw->promptofst);
 	w->cury = 0;
 
 	/* Generate prompt */
 	w->t->t->updtab[w->y] = 1;
-	genfmt(w->t->t, w->x, w->y, pw->promptofst, pw->prompt, BG_COLOR(bg_prompt), 0);
+	genfmt(w->t->t, w->x, w->y, pw->promptofst, pw->prompt, BG_COLOR(bg_prompt), 0, 0);
 
 	/* Position and size buffer */
 	bwmove(bw, w->x + pw->promptlen - pw->promptofst, w->y);
 	bwresz(bw, w->w - (pw->promptlen - pw->promptofst), 1);
 
 	/* Generate buffer */
-	bwgen(bw, 0);
+	bwgen(bw, 0, 0);
 }
 
 /* History functions */
@@ -99,9 +99,9 @@ void setup_history(B **history)
 
 /* Add line to history buffer */
 
-void append_history(B *hist,unsigned char *s,int len)
+void append_history(B *hist,char *s,ptrdiff_t len)
 {
-	P *q = pdup(hist->eof, USTR "append_history");
+	P *q = pdup(hist->eof, "append_history");
 	binsm(q, s, len);
 	p_goto_eof(q);
 	binsc(q, '\n');
@@ -110,16 +110,16 @@ void append_history(B *hist,unsigned char *s,int len)
 
 /* Promote line to end of history buffer */
 
-void promote_history(B *hist, long line)
+void promote_history(B *hist, off_t line)
 {
-	P *q = pdup(hist->bof, USTR "promote_history");
+	P *q = pdup(hist->bof, "promote_history");
 	P *r;
 	P *t;
 
 	pline(q, line);
-	r = pdup(q, USTR "promote_history");
+	r = pdup(q, "promote_history");
 	pnextl(r);
-	t = pdup(hist->eof, USTR "promote_history");
+	t = pdup(hist->eof, "promote_history");
 	binsb(t, bcpy(q, r));
 	bdel(q, r);
 	prm(q);
@@ -129,26 +129,27 @@ void promote_history(B *hist, long line)
 
 /* When user hits return in a prompt window */
 
-static int rtnpw(BW *bw)
+static int rtnpw(W *w)
 {
-	W *w = bw->parent;
-	PW *pw = (PW *) bw->object;
-	unsigned char *s;
+	BW *bw = (BW *)w->object;
+	PW *pw = (PW *)bw->object;
+	char *s;
 	W *win;
 	int *notify;
-	int (*pfunc) ();
+	int (*pfunc)(W *w, char *s, void *object, int *notify);
 	void *object;
-	long byte;
+	off_t byte;
 
 	/* Extract entered text from buffer */
 	p_goto_eol(bw->cursor);
 	byte = bw->cursor->byte;
 	p_goto_bol(bw->cursor);
-	s = brvs(bw->cursor, (int) (byte - bw->cursor->byte));
+	s = brvs(bw->cursor, byte - bw->cursor->byte);
 
-	if (pw->file_prompt) {
-		s = canonical(s);
-	}
+	if (pw->file_prompt & PWFLAG_FILENAME)
+		s = canonical(s, 0); /* Tilde expansion and // restart */
+	else if (pw->file_prompt & PWFLAG_COMMAND)
+		s = canonical(s, CANFLAG_NORESTART); /* Tilde expansion only */
 
 	/* Save text into history buffer */
 	if (pw->hist) {
@@ -160,7 +161,7 @@ static int rtnpw(BW *bw)
 	}
 
 	/* Do ~ expansion and set new current directory */
-	if (pw->file_prompt&2) {
+	if (pw->file_prompt & PWFLAG_UPDATE_CD) {
 		set_current_dir(bw, s,1);
 	}
 
@@ -178,15 +179,18 @@ static int rtnpw(BW *bw)
 
 	/* Call callback function */
 	if (pfunc) {
-		return pfunc(win->object, s, object, notify);
+		return pfunc(win, s, object, notify);
 	} else {
 		return -1;
 	}
 }
 
-int ucmplt(BW *bw, int k)
+int ucmplt(W *w, int k)
 {
-	PW *pw = (PW *) bw->object;
+	BW *bw;
+	PW *pw;
+	WIND_BW(bw, w);
+	pw = (PW *) bw->object;
 
 	if (pw->tab) {
 		return pw->tab(bw, k);
@@ -195,45 +199,47 @@ int ucmplt(BW *bw, int k)
 	}
 }
 
-static void inspw(BW *bw, B *b, long l, long n, int flg)
+static void inspw(W *w, B *b, off_t l, off_t n, int flg)
 {
+	BW *bw = (BW *)w->object;
 	if (b == bw->b) {
 		bwins(bw, l, n, flg);
 	}
 }
 
-static void delpw(BW *bw, B *b, long l, long n, int flg)
+static void delpw(W *w, B *b, off_t l, off_t n, int flg)
 {
+	BW *bw = (BW *)w->object;
 	if (b == bw->b) {
 		bwdel(bw, l, n, flg);
 	}
 }
 
-static int abortpw(BW *b)
+static int abortpw(W *w)
 {
-	PW *pw = b->object;
+	BW *bw = (BW *)w->object;
+	PW *pw = (PW *)bw->object;
 	void *object = pw->object;
-	int (*abrt) () = pw->abrt;
+	int (*abrt)(W *w, void *object) = pw->abrt;
+	W *win = bw->parent->win;
 
-	W *win = b->parent->win;
-
-	bwrm(b);
+	bwrm(bw);
 	joe_free(pw->prompt);
 	joe_free(pw);
 	if (abrt) {
-		return abrt(win->object, object);
+		return abrt(win, object);
 	} else {
 		return -1;
 	}
 }
 
 WATOM watompw = {
-	USTR "prompt",
+	"prompt",
 	disppw,
 	bwfllwt,
 	abortpw,
 	rtnpw,
-	utypebw,
+	utypew,
 	NULL,
 	NULL,
 	inspw,
@@ -243,23 +249,26 @@ WATOM watompw = {
 
 /* Create a prompt window */
 
-BW *wmkpw(W *w, unsigned char *prompt, B **history, int (*func) (), unsigned char *huh, int (*abrt) (), int (*tab) (), void *object, int *notify,struct charmap *map,int file_prompt)
+BW *wmkpw(W *w, const char *prompt, B **history, int (*func) (W *w, char *s, void *object, int *notify), const char *huh,
+          int (*abrt)(W *w, void *object),
+          int (*tab)(BW *bw, int k), void *object, int *notify,struct charmap *map,int file_prompt)
 {
-	W *new;
+	W *neww;
 	PW *pw;
 	BW *bw;
 
-	new = wcreate(w->t, &watompw, w, w, w->main, 1, huh, notify);
-	if (!new) {
+	neww = wcreate(w->t, &watompw, w, w, w->main, 1, huh, notify);
+	if (!neww) {
 		if (notify) {
 			*notify = 1;
 		}
 		return NULL;
 	}
-	wfit(new->t);
-	new->object = (void *) (bw = bwmk(new, bmk(NULL), 1));
+	w->t->curwin = neww; /* Set curwin before calling wfit to prevent deletion */
+	wfit(neww->t);
+	neww->object = (void *) (bw = bwmk(neww, bmk(NULL), 1));
 	bw->b->o.charmap = map;
-	bw->object = (void *) (pw = (PW *) joe_malloc(sizeof(PW)));
+	bw->object = (void *) (pw = (PW *) joe_malloc(SIZEOF(PW)));
 	pw->abrt = abrt;
 	pw->tab = tab;
 	pw->object = object;
@@ -268,8 +277,8 @@ BW *wmkpw(W *w, unsigned char *prompt, B **history, int (*func) (), unsigned cha
 	pw->promptofst = 0;
 	pw->pfunc = func;
 	pw->file_prompt = file_prompt;
-	if (pw->file_prompt) {
-		bw->b->o.syntax = load_syntax(USTR "filename");
+	if (pw->file_prompt & PWFLAG_FILENAME) {
+		bw->b->o.syntax = load_syntax("filename");
 		bw->b->o.highlight = 1;
 		bw->o.syntax = bw->b->o.syntax;
 		bw->o.highlight = bw->b->o.highlight;
@@ -286,21 +295,20 @@ BW *wmkpw(W *w, unsigned char *prompt, B **history, int (*func) (), unsigned cha
 		pw->hist = NULL;
 	}
 	/* Install current directory */
-	if ((file_prompt&4) && !nocurdir) {
-		unsigned char *curd = get_cd(w);
-		binsm (bw->cursor, sv(curd));
+	if ((file_prompt & PWFLAG_SEED_CD) && !nocurdir) {
+		char *curd = get_cd(w);
+		binsmq(bw->cursor, sv(curd));
 		p_goto_eof(bw->cursor);
 		bw->cursor->xcol = piscol(bw->cursor);
 	}
-	w->t->curwin = new;
 	return bw;
 }
 
 /* Tab completion functions */
 
-unsigned char **regsub(unsigned char **z, int len, unsigned char *s)
+char **regsub(char **z, ptrdiff_t len, char *s)
 {
-	unsigned char **lst = NULL;
+	char **lst = NULL;
 	int x;
 
 	for (x = 0; x != len; ++x)
@@ -309,9 +317,9 @@ unsigned char **regsub(unsigned char **z, int len, unsigned char *s)
 	return lst;
 }
 
-void cmplt_ins(BW *bw, unsigned char *line)
+void cmplt_ins(BW *bw, char *line)
 {
-	P *p = pdup(bw->cursor, USTR "cmplt_ins");
+	P *p = pdup(bw->cursor, "cmplt_ins");
 
 	p_goto_bol(p);
 	p_goto_eol(bw->cursor);
@@ -322,8 +330,39 @@ void cmplt_ins(BW *bw, unsigned char *line)
 	bw->cursor->xcol = piscol(bw->cursor);
 }
 
-int cmplt_abrt(BW *bw, int x, unsigned char *line)
+static void p_goto_bow(P *ptr)
 {
+	struct charmap *map = ptr->b->o.charmap;
+	int c;
+	while (joe_isalnum_(map, (c = prgetc(ptr))))
+		;
+	if (c != NO_MORE_DATA)
+		pgetc(ptr);
+}
+
+static void p_goto_eow(P *ptr)
+{
+	struct charmap *map = ptr->b->o.charmap;
+	while (joe_isalnum_(map, brch(ptr)))
+		pgetc(ptr);
+}
+
+static void word_ins(BW *bw, char *line)
+{
+	P *p = pdup(bw->cursor, "cmplt_ins");
+
+	p_goto_bow(p);
+	p_goto_eow(bw->cursor);
+	bdel(p, bw->cursor);
+	binsm(bw->cursor, sv(line));
+	p_goto_eol(bw->cursor);
+	prm(p);
+	bw->cursor->xcol = piscol(bw->cursor);
+}
+
+int cmplt_abrt(W *w, ptrdiff_t x, void *object)
+{
+	char *line = (char *)object;
 	if (line) {
 		/* cmplt_ins(bw, line); */
 		vsrm(line);
@@ -331,28 +370,39 @@ int cmplt_abrt(BW *bw, int x, unsigned char *line)
 	return -1;
 }
 
-int cmplt_rtn(MENU *m, int x, unsigned char *line)
+int cmplt_rtn(MENU *m, ptrdiff_t x, void *object, int k)
 {
-	cmplt_ins(m->parent->win->object, m->list[x]);
+	char *line = (char *)object;
+	cmplt_ins((BW *)m->parent->win->object, m->list[x]);
 	vsrm(line);
 	m->object = NULL;
 	wabort(m->parent);
 	return 0;
 }
 
-int simple_cmplt(BW *bw,unsigned char **list)
+static int word_rtn(MENU *m, ptrdiff_t x, void *object, int k)
+{
+	char *line = (char *)object;
+	word_ins((BW *)m->parent->win->object, m->list[x]);
+	vsrm(line);
+	m->object = NULL;
+	wabort(m->parent);
+	return 0;
+}
+
+int simple_cmplt(BW *bw,char **list)
 {
 	MENU *m;
 	P *p, *q;
-	unsigned char *line;
-	unsigned char *line1;
-	unsigned char **lst;
+	char *line;
+	char *line1;
+	char **lst;
 
-	p = pdup(bw->cursor, USTR "simple_cmplt");
+	p = pdup(bw->cursor, "simple_cmplt");
 	p_goto_bol(p);
-	q = pdup(bw->cursor, USTR "simple_cmplt");
+	q = pdup(bw->cursor, "simple_cmplt");
 	p_goto_eol(q);
-	line = brvs(p, (int) (q->byte - p->byte));	/* Assumes short lines :-) */
+	line = brvs(p, q->byte - p->byte);	/* FIXME: Assumes short lines :-) */
 	prm(p);
 	prm(q);
 
@@ -384,18 +434,81 @@ int simple_cmplt(BW *bw,unsigned char **list)
 		return -1;
 	}
 	if (aLEN(lst) == 1)
-		return cmplt_rtn(m, 0, line);
+		return cmplt_rtn(m, 0, line, 0);
 	else if (smode || isreg(line)) {
 		if (!menu_jump)
 			bw->parent->t->curwin=bw->parent;
 		return 0;
 	} else {
-		unsigned char *com = mcomplete(m);
+		char *com = mcomplete(m);
 
-		vsrm(m->object);
+		vsrm((char *)m->object);
 		m->object = com;
 		
 		cmplt_ins(bw, com);
+		wabort(m->parent);
+		smode = 2;
+		ttputc(7);
+		return 0;
+	}
+}
+
+int word_cmplt(BW *bw,char **list)
+{
+	MENU *m;
+	P *p, *q;
+	char *line;
+	char *line1;
+	char **lst;
+
+	p = pdup(bw->cursor, "word_cmplt");
+	p_goto_bow(p);
+	q = pdup(bw->cursor, "word_cmplt");
+	p_goto_eow(q);
+	line = brvs(p, q->byte - p->byte);	/* FIXME: Assumes short lines :-) */
+	prm(p);
+	prm(q);
+
+	line1 = vsncpy(NULL, 0, sv(line));
+	line1 = vsadd(line1, '*');
+	lst = regsub(list, aLEN(list), line1);
+	vsrm(line1);
+
+	if (!lst) {
+		ttputc(7);
+		vsrm(line);
+		return -1;
+	}
+
+	if (menu_above) {
+		if (bw->parent->link.prev->watom==&watommenu) {
+			wabort(bw->parent->link.prev);
+		}
+	} else {
+		if (bw->parent->link.next->watom==&watommenu) {
+			wabort(bw->parent->link.next);
+		}
+	}
+
+	m = mkmenu((menu_above ? bw->parent->link.prev : bw->parent), bw->parent, lst, word_rtn, cmplt_abrt, NULL, 0, line, NULL);
+	if (!m) {
+		varm(lst);
+		vsrm(line);
+		return -1;
+	}
+	if (aLEN(lst) == 1)
+		return word_rtn(m, 0, line, 0);
+	else if (smode || isreg(line)) {
+		if (!menu_jump)
+			bw->parent->t->curwin=bw->parent;
+		return 0;
+	} else {
+		char *com = mcomplete(m);
+
+		vsrm((char *)m->object);
+		m->object = com;
+		
+		word_ins(bw, com);
 		wabort(m->parent);
 		smode = 2;
 		ttputc(7);

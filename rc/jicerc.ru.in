@@ -59,6 +59,8 @@
 		в обычной 8-битной кодировке.
 
  -mid		При скроллинге выполнять центрирование курсора
+ -left nn	Amount to jump left when scrolling is necessary (-1 for 1/4 width)
+ -right nn	Amount to jump right when scrolling is necessary (-1 for 1/4 width)
 
  -marking	Подсвечивать текст между началом блока и курсором 
                 (используйте вместе с -lightoff)
@@ -131,7 +133,7 @@
 
  -columns nnn	Установить кол-во колонок на экране
 
- -help		Включать экран подсказки при запуске
+ -helpon	Включать экран подсказки при запуске
 
  -skiptop nnn	Не использовать верхние nnn строк экрана
 
@@ -153,6 +155,8 @@
 -guess_non_utf8	Allow guess of non-UTF-8 file encoding in a UTF-8 locale.
 
  -guess_utf8	Allow guess of UTF-8 file encoding in non-UTF-8 locale.
+
+-guess_utf16	Allow guess of UTF-16 encoding
 
 -guess_crlf     Автоопределять файлы MS-DOS и соотв. устанавливать -crlf
 
@@ -186,6 +190,15 @@
 		делает режим -mouse более удобным (запоминание/извлечение
 		будет выполняться прозрачно).
 
+-brpaste	When JOE starts, send command to the terminal emulator that
+		enables "bracketed paste mode" (but only if the terminal
+		seems to have the ANSI command set).  In this mode, text
+		pasted into the window is bracketed with ESC [ 2 0 0 ~ and
+		ESC [ 2 0 1 ~.
+
+-pastehack	If keyboard input comes in as one block assume it's a mouse
+		paste and disable autoindent and wordwrap.
+
  -square	Режим прямоугольных блоков
 
  -text_color color
@@ -208,6 +221,9 @@
 
 -search_prompting
 		Запрашивать образец для последующих поисков.
+
+ -regex		Search uses standard regular expression format (otherwise it uses
+		JOE format where all special characters have to be escaped).
 
  Строка определения строки состояния. -lmsg определяет часть, выровненную 
  влево, а -rmsg - вправо. Первый символ строки -rmsg - символ для заполнения 
@@ -250,6 +266,11 @@
 -rmsg  %S Стр %4r Поз %3c %t  Подсказка - по F1
 -smsg ** Line %r Col %c Offset %o(0x%O) %e %a(0x%A) Width %w ** 
 -zmsg ** Line %r Col %c Offset %o(0x%O) ** 
+-xmsg \i Joe's Own Editor %v (%b) ** Type \bCtrl-K Q\b to exit or \bCtrl-K H\b for help **\i
+
+ Key sequence hints which are displayed in various prompts.
+-aborthint ^C
+-helphint ^K H
 
 
  ВТОРАЯ СЕКЦИЯ: Установка локальных опций в зависимости от имени файла:
@@ -427,13 +448,17 @@ menu,"indent",rtn	= Indent select
 mode,"highlight",rtn	H Highlighting %Zhighlight%
 mode,"crlf",rtn	Z CR-LF/MS-DOS %Zcrlf%
 mode,"linums",rtn	N Line numbers %Zlinums%
+mode,"hiline",rtn	U Highlight line %Zhiline%
 mode,"beep",rtn	B Beep %Zbeep%
 mode,"rdonly",rtn	O Read only %Zrdonly%
 mode,"syntax",rtn	Y Syntax
+mode,"colors",rtn	S Color scheme
 mode,"encoding",rtn	E Encoding
 mode,"asis",rtn	% % Meta chars as-is
 mode,"language",rtn	V Language
 mode,"picture",rtn	P picture %Zpicture%
+mode,"type",rtn		F File type [%Ztype%]
+mode,"title",rtn	C Context %Ztitle%
 menu,"more-options",rtn	  % % More options...
 
 :defmenu more-options menu,"root",rtn
@@ -493,6 +518,7 @@ mode,"guess_crlf",rtn	% % Auto detect CR-LF %Zguess_crlf%
 mode,"guess_indent",rtn	% % Guess indent %Zguess_indent%
 mode,"guess_non_utf8",rtn	% % Guess non-UTF-8 %Zguess_non_utf8%
 mode,"guess_utf8",rtn	% % Guess UTF-8 %Zguess_utf8%
+mode,"guess_utf16",rtn	% % Guess UTF-16 %Zguess_utf16%
 mode,"force",rtn	% % Force last NL %Zforce%
 mode,"nobackup",rtn	% % No backup %Znobackup%
 
@@ -514,6 +540,8 @@ mode,"backpath",rtn	% % Path to backup files %Zbackpath%
 :defmenu cursor menu,"more-options",rtn
 mode,"pg",rtn	% % No. PgUp/PgDn lines %Zpg%
 mode,"mid",rtn	C Center on scroll %Zmid%
+mode,"left",rtn	L Columns to scroll left %Zleft%
+mode,"right",rtn R Columns to scroll right %Zright%
 mode,"floatmouse",rtn	% % Click past end %Zfloatmouse%
 mode,"rtbutton",rtn	% % Right button %Zrtbutton%
 
@@ -587,31 +615,39 @@ mode,"spaces",rtn	% % No tabs %Zspaces%
 }
 
 {Search
-\i   Окно ПОДСКАЗКИ - \|выключить по F1    пред.экран - ^P     след. экран ^N      \i
-\i \iСпециальные последовательности поиска:                                       \|\i \i
-\i \i    \b\\^  \\$\b  начало/конец строки          \b\\?\b     любой одиночный символ       \|\i \i
-\i \i    \b\\<  \\>\b  начало/конец слова           \b\\*\b     0 или более символов         \|\i \i
-\i \i    \b\\c\b     сбалансированное выражение C  \b\\\\\b     символ \\                     \|\i \i
-\i \i    \b\\[..]\b  один из элементов множества   \b\\n\b     перевод строки               \|\i \i
-\i \i    \b\\+\b     0 или более символов, следующих за \\+                             \|\i \i
-\i \iСпециальные последовательности замещения:                                    \|\i \i
-\i \i    \b\\&\b     замещать текстом, соответствующим строке поиска                   \|\i \i
-\i \i    \b\\0 - 9\b замещать текстом, соотв. n-ному  \b\\*\b, \b\\?\b, \b\\c\b, \b\\+\b, или \b\\[..]\b        \|\i \i
-\i \i    \b\\\\\b     замещать символом \\           \b\\n\b     замещать переводом строки    \|\i \i
+\i   Help Screen    \|turn off with ^KH    prev. screen ^[,    next screen ^[.     \i
+\i \iSearch sequences:                                                            \|\i \i
+\i \i    \\^  \\$  matches beg./end of line       \\.     match any single char      \|\i \i
+\i \i    \\<  \\>  matches beg./end of word       \\!     match char or expression   \|\i \i
+\i \i    \\(  \\)  grouping                       \\|     match left or right         \|\i \i
+\i \i    \\[a-z]  matches one of a set                                             \|\i \i
+\i \i    \\{1,3}  match 1 - 3 occurrences        \\?     match 0 or 1 occurrence     \|\i \i
+\i \i    \\+      match 1 or more occurrences    \\*     match 0 or more occurrences \|\i \i
+\i \iReplace sequences:                                                           \|\i \i
+\i \i    \\&      replaced with entire match     \\1 - 9 replaced with Nth group   \|\i \i
+\i \i    \\u \\l   convert next to upper/lower    \\U \\L  case convert until \\E     \|\i \i
+}
+
+{Escape sequences
+\i   Help Screen    \|turn off with ^KH    prev. screen ^[,    next screen ^[.     \i
+\i \iEscape sequences: \\x{10fff}  Unicode code point   \\p{Ll}  Unicode category \|\i \i
+\i \i    \\i / \\I  Identifier start      \\t  tab          \\e  escape               \|\i \i
+\i \i    \\c / \\C  Identifier continue   \\n  newline      \\r  carriage return      \|\i \i
+\i \i    \\d / \\D  Digit / Not a digit   \\b  backspace  \\xFF  hex character        \|\i \i
+\i \i    \\w / \\W  Word / Not a word     \\a  alert      \\377  octal character      \|\i \i
+\i \i    \\s / \\S  Space / Not a space   \\f  formfeed     \\\\  backslash            \|\i \i
 }
 
 {SearchOptions
 \i   Help Screen    \|turn off with ^KH    prev. screen ^[,    next screen ^[.     \i
 \i \iSearch options:                                                              \|\i \i
-\i \i   r Replace                                                                 \|\i \i
-\i \i   k Restrict search to highlighted block, which can be rectangular          \|\i \i
-\i \i   b Search backward instead of forward                                      \|\i \i
-\i \i   i Ignore case                                                             \|\i \i
-\i \i   a Search across all loaded files                                          \|\i \i
-\i \i   e Search across all files in Grep or Compile error list                   \|\i \i
-\i \i   w Wrap to beginning of file for this search                               \|\i \i
-\i \i   n Do not wrap to beginning of file for this search                        \|\i \i
-\i \i   nnn Perform exaclty nnn replacements                                      \|\i \i
+\i \i     r Replace      k Restrict search to highlighted block                   \|\i \i
+\i \i     i Ignore case  b Search backwards instead of forwards                   \|\i \i
+\i \i                    a Search across all loaded files                         \|\i \i
+\i \i                    e Search across all files in Grep or Compile error list  \|\i \i
+\i \i w / n  Allow / prevent wrap to start of file                                \|\i \i
+\i \i x / y  Search text is standard format / JOE format regular expression       \|\i \i
+\i \i   nnn  Perform exactly nnn replacements                                     \|\i \i
 }
 
 {Math
@@ -729,11 +765,14 @@ mode,"spaces",rtn	% % No tabs %Zspaces%
  к началу следующей строки.
 
 :windows		Общие клавиши для всех окон
-type		^@ TO Ъ		Напечатать символ
+type		U+0 TO U+10FFFF
 abort		^C		Аварийное прерывание
-abort		^K Q
-abort		^K ^Q
-abort		^K q
+ abort		^K Q
+ abort		^K ^Q
+ abort		^K q
+querysave,query,killjoe	^K Q	Query to save files, then exit
+querysave,query,killjoe	^K ^Q
+querysave,query,killjoe	^K q
 arg		^K \		Повтор следующей команды 
 explode		^K I		Показывать все окна или только одно
 explode		^K ^I
@@ -793,6 +832,8 @@ defm2drag	M2DRAG		Отметить последовательность слов
 defm3down	M3DOWN		Отметить строку в позиции мыши
 defm3up		M3UP
 defm3drag	M3DRAG		Отметить последовательность строк
+defmiddleup	MIDDLEUP
+defmiddledown	MIDDLEDOWN	Insert text
 
 xtmouse		^[ [ M		Начало обработки событий мыши в xterm
 extmouse	^[ [ <		Introduces an extended xterm mouse event (TODO: translate to Russian)
@@ -841,7 +882,7 @@ if,"char==65",then,"it's an A",else,"it's not an a",endif	^[ q
 :def shell_gparse gparse
 :def shell_release release
 :def shell_math maths
-:def shell_typemath txt,math,"ins",rtn,rtn,txt,"",rtn
+:def shell_typemath txt,math,"ins",rtn,rtn,txt,"\r",rtn
 :def shell_rtn rtn
 :def shell_edit edit
 :def shell_dellin dellin
@@ -858,6 +899,7 @@ if,"char==65",then,"it's an A",else,"it's not an a",endif	^[ q
 
 paste			^[ [ 2 0 2 ~		Base64 paste (obsolete) ???
 brpaste			^[ [ 2 0 0 ~		Bracketed paste
+brpaste_done		^[ [ 2 0 1 ~		Bracketed paste done
 rtarw,ltarw,begin_marking,rtarw,toggle_marking	^[ [ 1 ; 5 C    Mark right Xterm
 rtarw,ltarw,begin_marking,rtarw,toggle_marking	^[ [ 5 C        Mark right Gnome-terminal
  rtarw,ltarw,begin_marking,rtarw,toggle_marking	^[ O C		Mark right Putty Ctrl-rtarw
@@ -1001,7 +1043,9 @@ center		^K A		Центрировать строку
 center		^K ^A
 center		^K a
 crawll		^K <		Pan left
+crawll		^[ <		Pan left
 crawlr		^K >		Pan right
+crawlr		^[ >		Pan right
 delch		.kD		Удалить символ
 delch		^D
 deleol		^J		Удалить до конца строки
@@ -1187,18 +1231,18 @@ defm2down	M2DOWN		Hits return key
 :inherit windows
 
 :querya			Single-key query window for quoting
-type		^@ TO  
+type		U+0 TO U+10FFFF
 
 :querysr		Search & replace query window
-type		^@ TO  
+type		U+0 TO U+10FFFF
 
 :shell			Input to shell windows
 :inherit main
 ""		^C		Abort
 ""		^D		Eof
-"	"	^I		Tab
+"\t"		^I		Tab
 ""		^H		Backspace
-""		^M		Return
+"\r"		^M		Return
 ""		^?		Backspace
 
 :vtshell		Input to ANSI shell windows
@@ -1215,7 +1259,7 @@ type		^@ TO  
 ""		^C		Abort
 ""		^D		Eof
 ""		^E		EOL for bash
-"	"	^I		Tab
+"\t"		^I		Tab
 ""		^H		Backspace
-""		^M		Return
+"\r"		^M		Return
 ""		^?		Backspace

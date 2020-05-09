@@ -73,6 +73,9 @@
 /* Define to 1 if you have the `getwd' function. */
 #undef HAVE_GETWD
 
+/* If we have hypot() */
+#undef HAVE_HYPOT
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
@@ -195,6 +198,9 @@
    zero-length file name argument. */
 #undef HAVE_STAT_EMPTY_STRING_BUG
 
+/* Define to 1 if you have the <stddef.h> header file. */
+#undef HAVE_STDDEF_H
+
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 
@@ -287,9 +293,6 @@
 /* Define to 1 if `fork' works. */
 #undef HAVE_WORKING_FORK
 
-/* Define if isblank() works with expressions with side effects */
-#undef HAVE_WORKING_ISBLANK
-
 /* Define to 1 if `vfork' works. */
 #undef HAVE_WORKING_VFORK
 
@@ -302,9 +305,6 @@
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
 #undef LSTAT_FOLLOWS_SLASHED_SYMLINK
-
-/* Define if we have to reinstall signal handler when invoked */
-#undef NEED_TO_REINSTALL_SIGNAL
 
 /* Name of package */
 #undef PACKAGE
@@ -332,9 +332,6 @@
 
 /* Define as the return type of signal handlers (`int' or `void'). */
 #undef RETSIGTYPE
-
-/* Define if setpgrp() takes no arguments */
-#undef SETPGRP_VOID
 
 /* The size of `char', as computed by sizeof. */
 #undef SIZEOF_CHAR

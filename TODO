@@ -1,0 +1,9 @@
+Theming
+More JSF files (CMake)
+Extension language (Lua, probably)
+Plugin manager
+GUIs
+newb-friendly mode, like JPICO
+    C-c copies, C-v pastes, etc..   
+Move config into .config/joestar
+Vertical split windows

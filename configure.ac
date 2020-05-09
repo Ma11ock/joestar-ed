@@ -4,7 +4,7 @@
 AC_PREREQ(2.54)
 
 #### Here's the only place where to change version number ####
-AC_INIT(joe, 4.0)
+AC_INIT(joe, 4.6)
 AC_CONFIG_SRCDIR([src/b.c])
 
 AC_CANONICAL_BUILD
@@ -50,6 +50,14 @@ if test "$termcap" = "yes"; then
 	search_libs="$search_libs termcap"
 fi
 
+# Select Unicode version
+AC_ARG_VAR(UNICODE_VERSION,
+[  Select Unicode version: 8.0.0, 9.0.0 or 10.0.0  Default is 9.0.0 ])
+
+if test "$UNICODE_VERSION" = ""; then
+	UNICODE_VERSION=9.0.0
+fi
+
 AC_SEARCH_LIBS(openpty, util, AC_DEFINE_UNQUOTED(HAVE_OPENPTY, 1, [If we have BSD function openpty()]))
 AC_SEARCH_LIBS(login_tty, util, AC_DEFINE_UNQUOTED(HAVE_LOGIN_TTY, 1, [If we have BSD function login_tty()]))
 AC_SEARCH_LIBS(tgetflag, $search_libs, AC_DEFINE_UNQUOTED(TERMINFO, 1, [If we have newer terminfo/termcap capabilities]))
@@ -72,7 +80,12 @@ AC_CHECK_HEADERS([errno.h fcntl.h locale.h sgtty.h stdlib.h string.h])
 AC_CHECK_HEADERS([sys/ioctl.h sys/param.h sys/time.h unistd.h utime.h])
 AC_CHECK_HEADERS([sys/dirent.h time.h pwd.h paths.h pty.h libutil.h])
 AC_CHECK_HEADERS([sys/types.h sys/stat.h sys/wait.h limits.h signal.h])
-AC_CHECK_HEADERS([curses.h term.h utmp.h sys/utime.h])
+AC_CHECK_HEADERS([curses.h utmp.h sys/utime.h stddef.h])
+AC_CHECK_HEADERS([term.h],[],[],
+[#ifdef HAVE_CURSES_H
+#include <curses.h>
+#endif
+])
 
 AC_CHECK_HEADERS([selinux/selinux.h selinux/context.h])
 if test "$ac_cv_header_selinux_selinux_h" = "yes" -a "$ac_cv_header_selinux_context_h" = "yes" ; then
@@ -156,6 +169,7 @@ AC_SEARCH_LIBS(j0, m, AC_DEFINE_UNQUOTED(HAVE_J0, 1, [If we have j0()]))
 AC_SEARCH_LIBS(j1, m, AC_DEFINE_UNQUOTED(HAVE_J1, 1, [If we have j1()]))
 AC_SEARCH_LIBS(y0, m, AC_DEFINE_UNQUOTED(HAVE_Y0, 1, [If we have y0()]))
 AC_SEARCH_LIBS(y1, m, AC_DEFINE_UNQUOTED(HAVE_Y1, 1, [If we have y1()]))
+AC_SEARCH_LIBS(hypot, m, AC_DEFINE_UNQUOTED(HAVE_HYPOT, 1, [If we have hypot()]))
 
 joe_REINSTALL_SIGHANDLERS
 
@@ -182,23 +196,7 @@ AH_VERBATIM([_PARAMS],[/* Check to see if we can use strict prototypes */
 # Check for programs..
 AC_CHECK_PROG(SPELL,aspell,aspell,ispell)
 
-AC_CONFIG_FILES([Makefile src/Makefile rc/Makefile man/Makefile man/ru/Makefile
-syntax/Makefile po/Makefile charmaps/klingon
-syntax/4gl.jsf syntax/ada.jsf syntax/ant.jsf syntax/asm.jsf syntax/awk.jsf
-syntax/batch.jsf syntax/c.jsf syntax/cobol.jsf syntax/comment_todo.jsf
-syntax/conf.jsf syntax/csharp.jsf syntax/csh.jsf syntax/css.jsf
-syntax/debian.jsf syntax/diff.jsf syntax/elixir.jsf syntax/erb.jsf
-syntax/erlang.jsf syntax/fortran.jsf syntax/git-commit.jsf syntax/go.jsf
-syntax/haml.jsf syntax/haskell.jsf syntax/html.jsf syntax/htmlerb.jsf
-syntax/ini.jsf syntax/iptables.jsf syntax/java.jsf syntax/joerc.jsf
-syntax/js.jsf syntax/jsf_check.jsf syntax/jsf.jsf syntax/json.jsf
-syntax/lisp.jsf syntax/lua.jsf syntax/m4.jsf syntax/mail.jsf
-syntax/mason.jsf syntax/matlab.jsf syntax/md.jsf syntax/ocaml.jsf
-syntax/pascal.jsf syntax/perl.jsf syntax/php.jsf syntax/powershell.jsf
-syntax/prolog.jsf syntax/properties.jsf syntax/ps.jsf syntax/puppet.jsf
-syntax/python.jsf syntax/rexx.jsf syntax/ruby.jsf syntax/sed.jsf
-syntax/sh.jsf syntax/sieve.jsf syntax/skill.jsf syntax/sml.jsf
-syntax/spec.jsf syntax/sql.jsf syntax/tcl.jsf syntax/tex.jsf
-syntax/troff.jsf syntax/typescript.jsf syntax/verilog.jsf syntax/vhdl.jsf
-syntax/whitespace.jsf syntax/xml.jsf syntax/yaml.jsf syntax/filename.jsf])
+AC_CONFIG_FILES([Makefile src/Makefile src/util/Makefile rc/Makefile
+man/Makefile man/ru/Makefile syntax/Makefile po/Makefile colors/Makefile
+charmaps/klingon desktop/Makefile])
 AC_OUTPUT
