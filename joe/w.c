@@ -574,68 +574,68 @@ void wshowone(W *w)
 
 W *wcreate(Screen *t, WATOM *watom, W *where, W *target, W *original, int height, unsigned char *huh, int *notify)
 {
-	W *new;
+	W *newwin;
 
 	if (height < 1)
 		return NULL;
 
 	/* Create the window */
-	new = (W *) joe_malloc(sizeof(W));
-	new->notify = notify;
-	new->t = t;
-	new->w = t->w;
-	seth(new, height);
-	new->h = new->reqh;
-	new->y = -1;
-	new->ny = 0;
-	new->nh = 0;
-	new->x = 0;
-	new->huh = huh;
-	new->orgwin = original;
-	new->watom = watom;
-	new->object = NULL;
-	new->msgb = NULL;
-	new->msgt = NULL;
-	new->bstack = 0;
+	newwin = (W *) joe_malloc(sizeof(W));
+	newwin->notify = notify;
+	newwin->t = t;
+	newwin->w = t->w;
+	seth(newwin, height);
+	newwin->h = newwin->reqh;
+	newwin->y = -1;
+	newwin->ny = 0;
+	newwin->nh = 0;
+	newwin->x = 0;
+	newwin->huh = huh;
+	newwin->orgwin = original;
+	newwin->watom = watom;
+	newwin->object = NULL;
+	newwin->msgb = NULL;
+	newwin->msgt = NULL;
+	newwin->bstack = 0;
 	/* Set window's target and family */
-/* was:	if (new->win = target) {	which may be mistyped == */
-	if ((new->win = target) != NULL) {	/* A subwindow */
-		new->main = target->main;
-		new->fixed = height;
+/* was:	if (newwin->win = target) {	which may be mistyped == */
+	if ((newwin->win = target) != NULL) {	/* A subwindow */
+		newwin->main = target->main;
+		newwin->fixed = height;
 	} else {		/* A parent window */
-		new->main = new;
-		new->fixed = 0;
+		newwin->main = newwin;
+		newwin->fixed = 0;
 	}
 
 	/* Get space for window */
 	if (original) {
 		if (original->h - height <= 2) {
 			/* Not enough space for window */
-			joe_free(new);
+			joe_free(newwin);
 			return NULL;
 		} else
 			seth(original, original->h - height);
 	}
 
-	/* Create new keyboard handler for window */
+	/* Create newwin keyboard handler for window */
 	if (watom->context)
-		new->kbd = mkkbd(kmap_getcontext(watom->context));
+		newwin->kbd = mkkbd(kmap_getcontext(watom->context));
 	else
-		new->kbd = NULL;
+		newwin->kbd = NULL;
 
 	/* Put window on the screen */
 	if (where)
-		enquef(W, link, where, new);
+		enquef(W, link, where, newwin);
 	else {
 		if (t->topwin)
-			enqueb(W, link, t->topwin, new);
+			enqueb(W, link, t->topwin, newwin);
 		else {
-			izque(W, link, new);
-			t->curwin = t->topwin = new;
+			izque(W, link, newwin);
+			t->curwin = t->topwin = newwin;
 		}
 	}
 
-	return new;
+	return newwin;
 }
 
 /* Abort group of windows */

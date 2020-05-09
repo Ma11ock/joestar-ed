@@ -541,27 +541,27 @@ int usplitw(BW *bw)
 {
 	W *w = bw->parent;
 	int newh = getgrouph(w);
-	W *new;
+	W *newWin;
 	TW *newtw;
 	BW *newbw;
 
 	dostaupd = 1;
 	if (newh / 2 < FITHEIGHT)
 		return -1;
-	new = wcreate(w->t, w->watom, findbotw(w), NULL, w, newh / 2 + (newh & 1), NULL, NULL);
-	if (!new)
+	newWin = wcreate(w->t, w->watom, findbotw(w), NULL, w, newh / 2 + (newh & 1), NULL, NULL);
+	if (!newWin)
 		return -1;
 //	wfit(new->t);
-	new->object = (void *) (newbw = bwmk(new, bw->b, 0));
+	newWin->object = (void *) (newbw = bwmk(newWin, bw->b, 0));
 	++bw->b->count;
 	newbw->offset = bw->offset;
 	newbw->object = (void *) (newtw = (TW *) joe_malloc(sizeof(TW)));
-	iztw(newtw, new->y);
+	iztw(newtw, newWin->y);
 	pset(newbw->top, bw->top);
 	pset(newbw->cursor, bw->cursor);
 	newbw->cursor->xcol = bw->cursor->xcol;
-	new->t->curwin = new;
-	wfit(new->t);
+	newWin->t->curwin = newWin;
+	wfit(newWin->t);
 	return 0;
 }
 
@@ -569,25 +569,25 @@ int uduptw(BW *bw)
 {
 	W *w = bw->parent;
 	int newh = getgrouph(w);
-	W *new;
+	W *newwin;
 	TW *newtw;
 	BW *newbw;
 
 	dostaupd = 1;
-	new = wcreate(w->t, w->watom, findbotw(w), NULL, NULL, newh, NULL, NULL);
-	if (!new)
+	newwin = wcreate(w->t, w->watom, findbotw(w), NULL, NULL, newh, NULL, NULL);
+	if (!newwin)
 		return -1;
 	if (demotegroup(w))
-		new->t->topwin = new;
-	new->object = (void *) (newbw = bwmk(new, bw->b, 0));
+		newwin->t->topwin = newwin;
+	newwin->object = (void *) (newbw = bwmk(newwin, bw->b, 0));
 	++bw->b->count;
 	newbw->offset = bw->offset;
 	newbw->object = (void *) (newtw = (TW *) joe_malloc(sizeof(TW)));
-	iztw(newtw, new->y);
+	iztw(newtw, newwin->y);
 	pset(newbw->top, bw->top);
 	pset(newbw->cursor, bw->cursor);
 	newbw->cursor->xcol = bw->cursor->xcol;
-	new->t->curwin = new;
+	newwin->t->curwin = newwin;
 	wfit(w->t);
 	return 0;
 }

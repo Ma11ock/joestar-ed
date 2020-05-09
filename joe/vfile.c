@@ -214,19 +214,19 @@ unsigned char *vlock(VFILE *vfile, off_t addr)
 
 VFILE *vtmp(void)
 {
-	VFILE *new = (VFILE *) joe_malloc(sizeof(VFILE));
+	VFILE *newvfile = (VFILE *) joe_malloc(sizeof(VFILE));
 
-	new->fd = 0;
-	new->name = NULL;
-	new->alloc = 0;
-	new->size = 0;
-	new->left = 0;
-	new->lv = 0;
-	new->vpage = NULL;
-	new->flags = 1;
-	new->vpage1 = NULL;
-	new->addr = -1;
-	return enqueb_f(VFILE, link, &vfiles, new);
+	newvfile->fd = 0;
+	newvfile->name = NULL;
+	newvfile->alloc = 0;
+	newvfile->size = 0;
+	newvfile->left = 0;
+	newvfile->lv = 0;
+	newvfile->vpage = NULL;
+	newvfile->flags = 1;
+	newvfile->vpage1 = NULL;
+	newvfile->addr = -1;
+	return enqueb_f(VFILE, link, &vfiles, newvfile);
 }
 
 #ifdef junk
@@ -235,25 +235,25 @@ VFILE *vopen(name)
 unsigned char *name;
 {
 	struct stat buf;
-	VFILE *new = (VFILE *) joe_malloc(sizeof(VFILE));
+	VFILE *newvfile = (VFILE *) joe_malloc(sizeof(VFILE));
 
-	new->name = vsncpy(NULL, 0, sz(name));
-	new->fd = open(name, O_RDWR);
-	if (!new->fd) {
+	newvfile->name = vsncpy(NULL, 0, sz(name));
+	newvfile->fd = open(name, O_RDWR);
+	if (!newvfile->fd) {
 		fprintf(stderr, (char *)joe_gettext(_("Couldn\'t open file \'%s\'\n")), name);
-		joe_free(new);
+		joe_free(newvfile);
 		return NULL;
 	}
-	fstat(new->fd, &buf);
-	new->size = buf.st_size;
-	new->alloc = new->size;
-	new->left = 0;
-	new->lv = 0;
-	new->vpage = NULL;
-	new->flags = 0;
-	new->vpage1 = NULL;
-	new->addr = -1;
-	return enqueb_f(VFILE, link, &vfiles, new);
+	fstat(newvfile->fd, &buf);
+	newvfile->size = buf.st_size;
+	newvfile->alloc = newvfile->size;
+	newvfile->left = 0;
+	newvfile->lv = 0;
+	newvfile->vpage = NULL;
+	newvfile->flags = 0;
+	newvfile->vpage1 = NULL;
+	newvfile->addr = -1;
+	return enqueb_f(VFILE, link, &vfiles, newvfile);
 }
 
 #endif

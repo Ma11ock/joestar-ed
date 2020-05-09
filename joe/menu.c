@@ -609,7 +609,7 @@ int menu_above;
 
 MENU *mkmenu(W *w, W *targ, unsigned char **s, int (*func) (/* ??? */), int (*abrt) (/* ??? */), int (*backs) (/* ??? */), int cursor, void *object, int *notify)
 {
-	W *new;
+	W *newWin;
 	MENU *m;
 	int lines;
 	int h = (w->main->h*40) / 100; /* 40% of window size */
@@ -622,28 +622,28 @@ MENU *mkmenu(W *w, W *targ, unsigned char **s, int (*func) (/* ??? */), int (*ab
 			h = lines;
 	}
 
-	new = wcreate(w->t, &watommenu, w, targ, targ->main, h, NULL, notify);
+	newWin = wcreate(w->t, &watommenu, w, targ, targ->main, h, NULL, notify);
 
-	if (!new) {
+	if (!newWin) {
 		if (notify)
 			*notify = 1;
 		return NULL;
 	}
-	wfit(new->t);
-	new->object = (void *) (m = (MENU *) joe_malloc(sizeof(MENU)));
-	m->parent = new;
+	wfit(newWin->t);
+	newWin->object = (void *) (m = (MENU *) joe_malloc(sizeof(MENU)));
+	m->parent = newWin;
 	m->func = func;
 	m->abrt = abrt;
 	m->backs = backs;
 	m->object = object;
 	m->t = w->t;
-	m->h = new->h;
-	m->w = new->w;
-	m->x = new->x;
-	m->y = new->y;
+	m->h = newWin->h;
+	m->w = newWin->w;
+	m->x = newWin->x;
+	m->y = newWin->y;
 	m->top = 0;
 	ldmenu(m, s, cursor);
-	w->t->curwin = new;
+	w->t->curwin = newWin;
 	return m;
 }
 
