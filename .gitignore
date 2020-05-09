@@ -159,7 +159,6 @@ m4/lt~obsolete.m4
 # End of https://www.gitignore.io/api/autotools
 
 __pycache__
-*.jsf
 src/joe
 src/joestar 
 src/termidx
@@ -168,3 +167,5 @@ src/util/stringify
 src/util/termidx
 src/util/checkwidths
 src/util/uniproc
+
+**/*.o
