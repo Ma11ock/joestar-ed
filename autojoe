@@ -10,7 +10,7 @@ automake -a -c
 
 automake -a -c man/Makefile
 
-automake -a -c joe/Makefile
+automake -a -c src/Makefile
 
 automake -a -c man/ru/Makefile
 

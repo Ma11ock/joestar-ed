@@ -157,3 +157,6 @@ m4/lt~obsolete.m4
 ### Autotools Patch ###
 
 # End of https://www.gitignore.io/api/autotools
+
+__pycache__
+*.jsf

@@ -5,7 +5,7 @@ AC_PREREQ(2.54)
 
 #### Here's the only place where to change version number ####
 AC_INIT(joe, 4.0)
-AC_CONFIG_SRCDIR([joe/b.c])
+AC_CONFIG_SRCDIR([src/b.c])
 
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
@@ -14,7 +14,7 @@ AC_CANONICAL_TARGET
 # Init automake
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
-AM_CONFIG_HEADER(joe/autoconf.h)
+AM_CONFIG_HEADER(src/autoconf.h)
 
 # Checks for programs.
 AC_PROG_CC
@@ -182,7 +182,7 @@ AH_VERBATIM([_PARAMS],[/* Check to see if we can use strict prototypes */
 # Check for programs..
 AC_CHECK_PROG(SPELL,aspell,aspell,ispell)
 
-AC_CONFIG_FILES([Makefile joe/Makefile rc/Makefile man/Makefile man/ru/Makefile
+AC_CONFIG_FILES([Makefile src/Makefile rc/Makefile man/Makefile man/ru/Makefile
 syntax/Makefile po/Makefile charmaps/klingon
 syntax/4gl.jsf syntax/ada.jsf syntax/ant.jsf syntax/asm.jsf syntax/awk.jsf
 syntax/batch.jsf syntax/c.jsf syntax/cobol.jsf syntax/comment_todo.jsf
