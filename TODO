@@ -5,7 +5,6 @@ Plugin manager
 GUIs
 newb-friendly mode, like JPICO (JNote?)
     C-c copies, C-v pastes, etc..   
-Move config into .config/joestar
 Vertical split windows
 Unit tests
 Automatically strip the binary

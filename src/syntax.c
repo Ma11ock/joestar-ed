@@ -733,10 +733,22 @@ static struct high_state *load_dfa(struct high_syntax *syntax)
 
 	/* Load it */
 	p = getenv("HOME");
+		if (p) {
+		joe_snprintf_2(name,SIZEOF(name),"%s/.config/joestar/syntax/%s.jsf",p,syntax->name);
+		f = jfopen(name,"r");
+		if(f != NULL)
+		{
+		    goto found_label;
+		}
+	}
+
+
 	if (p) {
-		joe_snprintf_2(name,SIZEOF(name),"%s/.joe/syntax/%s.jsf",p,syntax->name);
+		joe_snprintf_2(name,SIZEOF(name),"%s/.joestar/syntax/%s.jsf",p,syntax->name);
 		f = jfopen(name,"r");
 	}
+
+found_label:
 
 	if (!f) {
 		joe_snprintf_2(name,SIZEOF(name),"%ssyntax/%s.jsf",JOEDATA,syntax->name);
