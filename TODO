@@ -3,7 +3,11 @@ More JSF files (CMake)
 Extension language (Lua, probably)
 Plugin manager
 GUIs
-newb-friendly mode, like JPICO
+newb-friendly mode, like JPICO (JNote?)
     C-c copies, C-v pastes, etc..   
 Move config into .config/joestar
 Vertical split windows
+Unit tests
+Automatically strip the binary
+
+org-mode, or some type of note mode
