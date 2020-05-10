@@ -644,6 +644,8 @@
 *jstarrc.in
 *rjoerc.in
 *jpicorc.in
+*jnoterc
+*jnoterc.in
 -syntax joerc
 -highlighter_context
 

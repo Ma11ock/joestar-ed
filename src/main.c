@@ -420,7 +420,7 @@ int main(int argc, char **real_argv, const char * const *envv)
 	if(s)
 	{
 	    s = vsncpy(NULL, 0, sz(s));
-	    s = vsncpy(sv(s), sc("/.config/joestar/."));
+	    s = vsncpy(sv(s), sc("/.config/joestar/"));
 	    s = vsncpy(sv(s), sv(run));
 	    s = vsncpy(sv(s), sc("rc"));
 

@@ -10,3 +10,4 @@ Unit tests
 Automatically strip the binary
 
 org-mode, or some type of note mode
+look for ftyperc in .config/joestar

@@ -1,13 +1,15 @@
 /*
  *	*rc file parser
  *	Copyright
- *		(C) 1992 Joseph H. Allen; 
+ *		(C) 1992 Joseph H. Allen
  *
  *	This file is part of JOE (Joe's Own Editor)
  */
 #include "types.h"
 
 /* Validate joerc file */
+
+/* This file has been modified in joestar to look into ~/.config/joestar for files first  */
 
 int validate_rc()
 {
@@ -242,10 +244,20 @@ int procrc(CAP *cap, char *name)
 							char *p = getenv("HOME");
 							int rtn = -1;
 							bf[0] = 0;
-							if (p && buf[x] != '/') {
+							int has_found_file = 0;
+							if (p && buf[x] != '/')
+							{
+								joe_snprintf_2(bf,SIZEOF(bf),"%s/.config/joestar/%s",p,buf + x);
+								rtn = procrc(cap, bf);
+								has_found_file = 1;
+							}
+
+                            if (!has_found_file)
+                            {
 								joe_snprintf_2(bf,SIZEOF(bf),"%s/.joe/%s",p,buf + x);
 								rtn = procrc(cap, bf);
 							}
+
 							if (rtn == -1 && buf[x] != '/') {
 								joe_snprintf_2(bf,SIZEOF(bf),"%s%s",JOERC,buf + x);
 								rtn = procrc(cap, bf);
