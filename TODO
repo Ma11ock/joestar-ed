@@ -1,13 +1,21 @@
-Theming
+Theming (joe might already have this?)
 More JSF files (CMake)
 Extension language (Lua, probably)
 Plugin manager
 GUIs
 newb-friendly mode, like JPICO (JNote?)
-    C-c copies, C-v pastes, etc..   
+    C-c copies, C-v pastes, etc..
+    Make install file install jnoterc, and make a jnote symlink
+    command to mark the entire buffer while keeping the cursor in the same spot
+    command copy text in a tmp buffer   
+ 
 Vertical split windows
 Unit tests
 Automatically strip the binary
 
 org-mode, or some type of note mode
-look for ftyperc in .config/joestar
+make install script install into .config/joestar/
+manage DEADJOE files by putting the in .config (so theyre out of the way)
+clean up default joerc files, make them minimalist like VIM's
+auto revert (decent chance joe might already have this)
+relative line numbers (and hybrid line numbers)

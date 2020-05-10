@@ -191,7 +191,7 @@
   \l  Italic
  TODO prolly have to change help message
 -lmsg  %n %* %y
--rmsg  %S %e Ln %4r, Col %3c %p ^C^H for Help
+-rmsg  %S %e Ln %4r, Col %3c %p ^H for Help
 -smsg ** Line %r Col %c Offset %o(0x%O) %e %a(0x%A) Width %w ** 
 -zmsg ** Line %r Col %c Offset %o(0x%O) ** 
 -xmsg \i Joe's Own Editor %v (%b) ** Type \b^X ^C\b to exit or \b^X ^H\b for help **\i
@@ -665,12 +665,12 @@ mode,"spaces",rtn	% % No tabs %Zspaces%
  BEGIN COMMON KEYBINDS
 :windows		Bindings common to all windows
 type		U+0 TO U+10FFFF
-abort		^[ f x		Abort window
+abort		^[ f		Abort window TODO Does not work
 uarg		^U		Repeat prefix
 uarg		^[ -
 uarg		^[ 0 TO 9
-help		^C h
-help		^C H
+help		^ h
+help		^ H
  help		.k1
 hnext		^] .
 hprev		^] ,

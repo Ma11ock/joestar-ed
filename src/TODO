@@ -1104,6 +1104,7 @@ X ^J	return
 - ^C	copy
 - F3	find next
 - F5	date/time
+- F1    help
 
 ===============================================
 Done:

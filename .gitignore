@@ -167,5 +167,6 @@ src/util/stringify
 src/util/termidx
 src/util/checkwidths
 src/util/uniproc
+jnote
 
 **/*.o
