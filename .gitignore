@@ -170,3 +170,4 @@ src/util/uniproc
 jnote
 
 **/*.o
+test.txt
