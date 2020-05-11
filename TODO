@@ -4,10 +4,9 @@ Extension language (Lua, probably)
 Plugin manager
 GUIs
 newb-friendly mode, like JPICO (JNote?)
-    C-c copies, C-v pastes, etc..
     Make install file install jnoterc, and make a jnote symlink
     command to mark the entire buffer while keeping the cursor in the same spot
-    command copy text in a tmp buffer   
+    command copy text in a tmp buffer
  
 Vertical split windows
 Unit tests

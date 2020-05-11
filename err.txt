@@ -1,7 +1,2 @@
-Cua cut
-blkget
-after strlen
-ublkdel
-Cua copy
-NULL
-blkget
+
+File test.txt~ not saved

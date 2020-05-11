@@ -171,3 +171,4 @@ jnote
 
 **/*.o
 test.txt
+err.txt

@@ -24,8 +24,6 @@ int lightoff = 0;		/* Set if highlighting should turn off
 P *markb = NULL;		/* Beginning and end of block */
 P *markk = NULL;
 
-
-
 /* Push markb & markk */
 
 typedef struct marksav MARKSAV;
@@ -1391,7 +1389,7 @@ char *blkget(BW *bw)
 		return 0;
 }
 
-size_t cua_buf_size = 0; /* Size of copy_buf  */
+static size_t cua_buf_size = 0; /* Size of copy_buf  */
 char *copy_buf = NULL;  /* Buffer for CUA style copying  */ 
 
 int cua_copy(W *w, int k)
@@ -1454,6 +1452,15 @@ int cua_cut(W* w, int k)
 
     /* TODO joe_free on exit  */
     return result;
+}
+
+int cua_selectall(W *w, int k)
+{
+    u_goto_bof(w, k);
+    umarkb(w, k);
+    u_goto_eof(w, k);
+    umarkk(w, k);
+    return 1;
 }
 
 void free_ublock()

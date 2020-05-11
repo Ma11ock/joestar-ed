@@ -1102,6 +1102,7 @@ isrch       ^F
 isrch       .k3
 savenow     ^S
 cuacut      ^X
+cuaselall   ^A
 cuacpy      ^C
 cuapaste    ^V
 cuacpy      ^c
