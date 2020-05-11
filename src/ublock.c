@@ -1390,7 +1390,7 @@ char *blkget(BW *bw)
 }
 
 static size_t cua_buf_size = 0; /* Size of copy_buf  */
-char *copy_buf = NULL;  /* Buffer for CUA style copying  */ 
+char *copy_buf = NULL;  /* Buffer for CUA style copying  */
 
 int cua_copy(W *w, int k)
 {

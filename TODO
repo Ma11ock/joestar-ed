@@ -1,13 +1,17 @@
 Theming (joe might already have this?)
-More JSF files (CMake)
+
+JSF
+    generator script (Lua)
+    more (CMake)
+    more bisqwit-style (c.jsf is his)
+
 Extension language (Lua, probably)
 Plugin manager
 GUIs
 newb-friendly mode, like JPICO (JNote?)
     Make install file install jnoterc, and make a jnote symlink
-    command to mark the entire buffer while keeping the cursor in the same spot
-    command copy text in a tmp buffer
- 
+    Help buffer
+
 Vertical split windows
 Unit tests
 Automatically strip the binary

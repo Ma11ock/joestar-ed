@@ -172,3 +172,7 @@ jnote
 **/*.o
 test.txt
 err.txt
+
+tests/CMakeFiles
+tests/src
+tests/tests
