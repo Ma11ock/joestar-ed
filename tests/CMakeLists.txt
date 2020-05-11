@@ -1,7 +1,13 @@
 enable_testing()
 
+# gtest needs threads
+find_package(Threads REQUIRED)
+find_package(GTest REQUIRED)
+
+
 enable_language(CXX)
 set(CMAKE_CXX_VERSION 11)
+#include_directories("${PROJECT_SOURCE_DIR}/src/") It won't compile with this for some reason
 
 
 set(BINARY ${CMAKE_PROJECT_NAME}_test)
@@ -14,16 +20,22 @@ add_executable(
     ublock.cpp
 )
 
-add_test(NAME ${BINARY} COMMAND ${BINARY})
-
 target_link_libraries(
     ${BINARY}
-    # TODO the lib
     ${CMAKE_PROJECT_NAME}
     gtest
     gtest_main
-    pthread # Maybe necessary?
+    pthread
 )
+
+add_test(
+    NAME    testfoo
+    COMMAND ${BINARY}
+)
+
+# Auto run the test on make check
+add_custom_target(check COMMAND ${BINARY}
+                  DEPENDS ${BINARY})
 
 if(CMAKE_BUILD_TYPE STREQUAL "debug")
 target_compile_options(${BINARY} PRIVATE
@@ -33,4 +45,4 @@ target_compile_options(${BINARY} PRIVATE
           /W4 /WX>)
 endif()
 
-
+        

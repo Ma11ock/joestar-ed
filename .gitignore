@@ -176,3 +176,6 @@ err.txt
 tests/CMakeFiles
 tests/src
 tests/tests
+
+# CMake produces these
+tests/*.tcl
