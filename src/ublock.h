@@ -9,7 +9,7 @@
 extern int square; /* Column / rectangular block mode */
 extern int lightoff; /* Automatic turn off highlighting */
 extern P *markb, *markk; /* ^KB and ^KK positions */
-extern char *copy_buf; /* Buffer for CUA style copying  */
+extern char *copy_buf;  /* Buffer for CUA style copying  */ 
 
 void pinsrect(P *cur, B *tmp, off_t width, int usetabs);
 int ptabrect(P *org, off_t height, off_t right);
@@ -49,5 +49,6 @@ int blklr(BW *bw, double *,double *, double *, double *, double *, int, int);
 char *blkget(BW *bw);
 int cua_copy(W *w, int k); /* Copy the region into copy_buf  */
 int cua_paste(W *w, int k); /* Paste what is in the copy buffer  */
+int cua_cut(W *w, int k); /* Copy the region into copy_buf and kill the region  */
 extern int autoswap; /* Automatically swap markb and markk if need to make a valid block */
 extern int nowmarking; /* Now marking flag (so make block bigger) for Ctrl-arrow key block selection */

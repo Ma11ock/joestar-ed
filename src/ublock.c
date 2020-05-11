@@ -24,7 +24,7 @@ int lightoff = 0;		/* Set if highlighting should turn off
 P *markb = NULL;		/* Beginning and end of block */
 P *markk = NULL;
 
-char *copy_buf = NULL;
+
 
 /* Push markb & markk */
 
@@ -1392,24 +1392,33 @@ char *blkget(BW *bw)
 }
 
 size_t cua_buf_size = 0; /* Size of copy_buf  */
+char *copy_buf = NULL;  /* Buffer for CUA style copying  */ 
 
 int cua_copy(W *w, int k)
 {
-    if (copy_buf != NULL)
+    int result = 1;
+
+    /* Place into copy buffer if valid block  */
+    if(markv(1))
     {
-        joe_free(copy_buf);
-        copy_buf = NULL;
+        if (copy_buf != NULL)
+        {
+            joe_free(copy_buf);
+            copy_buf = NULL;
+            cua_buf_size = 0;
+        }
+
+        copy_buf = blkget((BW*)w);
+        cua_buf_size = strlen(copy_buf);
+    }
+    else
+    {
+        msgnw(((BW*)w)->parent, joe_gettext(_("No block")));
+        result = 0;
     }
 
-    copy_buf = blkget((BW*)w);
-    if(copy_buf == NULL)
-    {
-        cua_buf_size = 0;
-        return 0;
-    }
     /* TODO joe_free on exit  */
-    cua_buf_size = strlen(copy_buf);
-    return 1;
+    return result;
 }
 
 int cua_paste(W *w, int k)
@@ -1417,4 +1426,32 @@ int cua_paste(W *w, int k)
     BW *tobject = (BW*)w->object;
     binsm(tobject->cursor, copy_buf, cua_buf_size);
     return 1;
+}
+
+int cua_cut(W* w, int k)
+{
+    int result = 1;
+
+    /* Place into copy buffer if valid block  */
+    if(markv(1))
+    {
+        if (copy_buf != NULL)
+        {
+            joe_free(copy_buf);
+            copy_buf = NULL;
+            cua_buf_size = 0;
+        }
+
+        copy_buf = blkget((BW*)w);
+        cua_buf_size = strlen(copy_buf);
+        ublkdel(w, k);
+    }
+    else
+    {
+        msgnw(((BW*)w)->parent, joe_gettext(_("No block")));
+        result = 0;
+    }
+
+    /* TODO joe_free on exit  */
+    return result;
 }

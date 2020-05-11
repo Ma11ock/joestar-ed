@@ -232,7 +232,7 @@
 -xmsg \i Joe's Own Editor %v (%b) ** Type \bCtrl-K Q\b to exit or \bCtrl-K H\b for help **\i
 
  Key sequence hints which are displayed in various prompts.
--aborthint ^C
+-aborthint ^[ F X
 -helphint ^K H
 
  SECOND SECTION: File name dependant local option settings:
@@ -771,7 +771,6 @@ mode,"spaces",rtn	% % No tabs %Zspaces%
 
 :windows		Bindings common to all windows
 type		U+0 TO U+10FFFF
-abort		^C		Abort window
 abort		^[ F X
 abort		^[ f x
  abort		^K ^Q
@@ -1102,6 +1101,12 @@ filt		^K /		Filter block
 isrch       ^F
 isrch       .k3
 savenow     ^S
+cuacut      ^X
+cuacpy      ^C
+cuapaste    ^V
+cuacpy      ^c
+cuapaste    ^v
+
  finish		^K ^M		Complete text under cursor
 fnext		^L		Find next
 fmtblk		^K J		Format paragraphs in block
@@ -1136,7 +1141,7 @@ markk		^K k
  mode		^T		Options menu
 menu,"root",rtn	^T
 nextpos		^K =		Goto next position in position history
-nextword	^X		Goto next word
+ nextword	^X		Goto next word
 open		^]		Split line
 prevpos		^K -		Previous position in history
 reload		^K `		Revert file
@@ -1234,7 +1239,7 @@ ltarwmenu	^[ [ D
 ltarwmenu	^[ O D
  ltarwmenu ^# D
 pgdnmenu	.kN		Screen down
-pgdnmenu	^V
+ pgdnmenu	^V TODO pagedown
 pgdnmenu	^[ [ 6 ~
  pgdnmenu  ^# S
 pgupmenu	.kP		Screen up
@@ -1271,7 +1276,6 @@ type		U+0 TO U+10FFFF
 
 :shell			Input to shell windows
 :inherit main
-""		^C		Abort
 ""		^D		Eof
 "\t"		^I		Tab
 ""		^H		Backspace
