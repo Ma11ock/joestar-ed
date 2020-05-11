@@ -1283,14 +1283,14 @@ int calclincols(BW *bw)
 {
 	int width = 0;
 	off_t lines = bw->b->eof->line + 1;
-	
+
 	if (!bw->o.linums) {
 		return 0;
 	}
-	
+
 	if (lines < 10) {
 		width = 1;
-	} else if (lines < 100) { 
+	} else if (lines < 100) {
 		width = 2;
 	} else if (lines < 1000) {
 		width = 3;

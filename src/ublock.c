@@ -24,6 +24,8 @@ int lightoff = 0;		/* Set if highlighting should turn off
 P *markb = NULL;		/* Beginning and end of block */
 P *markk = NULL;
 
+char *copy_buf = NULL;
+
 /* Push markb & markk */
 
 typedef struct marksav MARKSAV;
@@ -1387,4 +1389,32 @@ char *blkget(BW *bw)
 		return buf;
 	} else
 		return 0;
+}
+
+size_t cua_buf_size = 0; /* Size of copy_buf  */
+
+int cua_copy(W *w, int k)
+{
+    if (copy_buf != NULL)
+    {
+        joe_free(copy_buf);
+        copy_buf = NULL;
+    }
+
+    copy_buf = blkget((BW*)w);
+    if(copy_buf == NULL)
+    {
+        cua_buf_size = 0;
+        return 0;
+    }
+    /* TODO joe_free on exit  */
+    cua_buf_size = strlen(copy_buf);
+    return 1;
+}
+
+int cua_paste(W *w, int k)
+{
+    BW *tobject = (BW*)w->object;
+    binsm(tobject->cursor, copy_buf, cua_buf_size);
+    return 1;
 }

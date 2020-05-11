@@ -31,6 +31,8 @@ CMD cmds[] = {
 	{"bknd", TYPETW, ubknd, NULL, 0, NULL},
 	{"bkwdc", TYPETW + TYPEPW, ubkwdc, NULL, 1, "fwrdc"},
 	{"blkcpy", TYPETW + TYPEPW + EFIXXCOL + EMOD + EBLOCK, ublkcpy, NULL, 1, NULL},
+	{"cuacpy", TYPETW + TYPEPW + EFIXXCOL + EMOD + EBLOCK, cua_copy, NULL, 0, NULL},
+	{"cuapaste", TYPETW + TYPEPW + EFIXXCOL + EMOD + EBLOCK, cua_paste, NULL, 0, NULL},
 	{"blkdel", TYPETW + TYPEPW + EFIXXCOL + EKILL + EMOD + EBLOCK, ublkdel, NULL, 0, NULL},
 	{"blkmove", TYPETW + TYPEPW + EFIXXCOL + EMOD + EBLOCK, ublkmove, NULL, 0, NULL},
 	{"blksave", TYPETW + TYPEPW + EBLOCK, ublksave, NULL, 0, NULL},

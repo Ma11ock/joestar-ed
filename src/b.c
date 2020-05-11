@@ -368,7 +368,7 @@ void breplace(B *b, B *n)
 		joe_free(b->name);
 
 	reset_all_lattr_db(b->db);
-	
+
 	/* Take new name */
 	b->name = zdup(n->name);
 
@@ -1006,35 +1006,35 @@ int prgetc(P *p)
 	int c, left = 6;
 	off_t startbyte, startcol;
 	int val = 0;
-	
+
 	if (!p->b->o.charmap->type || pisbol(p))
 		return prgetb(p);
-	
+
 	/* Save p for later column calculation */
 	val = p->valcol;
 	startbyte = p->byte;
 	startcol = p->col;
-	
+
 	/* Read to start of utf-8 sequence */
 	do {
 		c = prgetb(p);
 	} while (left-- > 0 && (c & 0xC0) == 0x80 && c != NO_MORE_DATA);
-	
+
 	if (c == NO_MORE_DATA)
 		return c;
-	
+
 	/* Get full character */
 	q = pdup(p, "prgetc");
 	c = pgetc(q);
-	
+
 	/* Keep column valid */
 	if (val && c != '\n' && c != '\t' && q->byte == startbyte) {
 		p->valcol = 1;
 		p->col = startcol - joe_wcwidth(1, c);
 	}
-	
+
 	prm(q);
-	
+
 	return c;
 }
 
