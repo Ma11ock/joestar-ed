@@ -1455,3 +1455,12 @@ int cua_cut(W* w, int k)
     /* TODO joe_free on exit  */
     return result;
 }
+
+void free_ublock()
+{
+    /* Check if NULL just in case...  */
+    if(copy_buf != NULL)
+    {
+        joe_free(copy_buf);
+    }
+}

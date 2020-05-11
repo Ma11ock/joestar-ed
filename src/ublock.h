@@ -49,6 +49,7 @@ int blklr(BW *bw, double *,double *, double *, double *, double *, int, int);
 char *blkget(BW *bw);
 int cua_copy(W *w, int k); /* Copy the region into copy_buf  */
 int cua_paste(W *w, int k); /* Paste what is in the copy buffer  */
-int cua_cut(W *w, int k); /* Copy the region into copy_buf and kill the region  */
+int cua_cut(W *w, int k); /* Copy the region into copy_buf and kill the region */
+void free_ublock(); /* Free all vars.  */
 extern int autoswap; /* Automatically swap markb and markk if need to make a valid block */
 extern int nowmarking; /* Now marking flag (so make block bigger) for Ctrl-arrow key block selection */

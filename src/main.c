@@ -703,7 +703,7 @@ int main(int argc, char **real_argv, const char * const *envv)
 			a = vaadd(a, cmd);
 			cmd = vsncpy(NULL, 0, sc("/bin/cat"));
 			a = vaadd(a, cmd);
-			
+
 			cstart ((BW *)maint->curwin->object, "/bin/sh", a, NULL, NULL, 0, 1, NULL, 0);
 		}
 	}
@@ -717,6 +717,7 @@ int main(int argc, char **real_argv, const char * const *envv)
 
 	vclose(vmem);
 	nclose(n);
+	free_ublock();
 
 	if  (noexmsg) {
 		if (notite)
@@ -735,6 +736,6 @@ exit_errors:
 	/* Write out error log to console if we are exiting with errors. */
 	if (startup_log && startup_log->eof->byte)
 		bsavefd(startup_log->bof, 2, startup_log->eof->byte);
-	
+
 	return 1;
 }
