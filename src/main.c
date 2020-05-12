@@ -293,10 +293,9 @@ int ushowlog(W *w, int k)
 	return 1;
 }
 
-int main(int argc, char **real_argv, const char * const *envv)
+int main(int argc, char **argv, const char * const *envv)
 {
 	CAP *cap;
-	char **argv = (char **)real_argv;
 	struct stat sbuf;
 	char *s;
 	char *t;

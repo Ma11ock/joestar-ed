@@ -278,20 +278,20 @@ void setopt(B *b, const char *parsed_name)
  * variable */
 
 struct glopts {
-	const char *name;		/* Option name */
-	int type;		/*      0 for global option flag
-				   1 for global option int
-				   2 for global option string (in locale encoding)
-				   4 for local option flag
-				   5 for local option int
-				   14 for local option off_t
-				   6 for local option string (in utf8)
-				   7 for local option off_t+1, with range checking
-				   9 for syntax (options->syntax_name)
-				   13 for byte encoding (options->map_name)
-				   15 for file type (options->ftype)
-				   17 for color scheme
-				 */
+	const char *name;/* Option name */
+	int type;		 /*     0 for global option flag
+				            1 for global option int
+                            2 for global option string (in locale encoding)
+                            4 for local option flag
+                            5 for local option int
+                            14 for local option off_t
+                            6 for local option string (in utf8)
+                            7 for local option off_t+1, with range checking
+                            9 for syntax (options->syntax_name)
+                            13 for byte encoding (options->map_name)
+                            15 for file type (options->ftype)
+                            17 for color scheme
+                     */
 	void *set;		/* Address of global option */
 	const char *addr;		/* Local options structure member address */
 	const char *yes;		/* Message if option was turned on, or prompt string */
@@ -570,7 +570,6 @@ int glopt(char *s, char *arg, OPTIONS *options, int set)
 	}
 
 	opt = (struct glopts *)htfind(opt_tab, s);
-
 	if (opt) {
 		switch (opt->type) {
 		case 0: /* Global variable flag option */
@@ -613,7 +612,7 @@ int glopt(char *s, char *arg, OPTIONS *options, int set)
 					if (val >= opt->low && val <= opt->high)
 						*(int *) ((char *)
 							  options + opt->ofst) = val;
-				} 
+				}
 			}
 			if (arg)
 				ret = 2;

@@ -24,3 +24,8 @@ clean up default joerc files, make them minimalist like VIM's
 auto revert (decent chance joe might already have this)
 relative line numbers (and hybrid line numbers)
     redo turning on and off linums, have it rely on the enum
+
+bug fixes:
+    I had a segfualt after putting in a strange key combo. Must find out
+        what was...
+    JOE cannot take cmd ARGS that have arguments (such has linum_mode)
