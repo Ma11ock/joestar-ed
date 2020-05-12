@@ -199,7 +199,7 @@ void bwfllwt(W *thew)
 
 		msetI(w->t->t->updtab + w->y, 1, w->h);
 	}
-	
+
 	if (w->o.hiline) {
 		if (w->curlin != w->cursor->line) {
 			/* Update old and new cursor lines */
@@ -724,12 +724,29 @@ static void gennum(BW *w, int (*screen)[COMPOSE], int *attr, SCRN *t, ptrdiff_t 
 	off_t lin = w->top->line + y - w->y;
 
 	if (lin <= w->b->eof->line)
+	{
+	    /* Relative line numbers */
+
+	    if(lin == w->curlin)
+	    {
+	        /* Current line number  */
+	        joe_snprintf_1(buf, SIZEOF(buf), " %21lld ", 0ll);
+	    }
+	    else
+	    {
+	        long long rel_linum = lin - w->curlin;
+	        rel_linum = (rel_linum < 0) ? rel_linum * -1 : rel_linum;
+	        joe_snprintf_1(buf, SIZEOF(buf), " %21lld ", rel_linum);
+	    }
 #ifdef HAVE_LONG_LONG
-		joe_snprintf_1(buf, SIZEOF(buf), " %21lld ", (long long)(w->top->line + y - w->y + 1));
+        /* Line numbers are drawn here  */
+		//joe_snprintf_1(buf, SIZEOF(buf), " %21lld ", (long long)(w->top->line + y - w->y + 1));
 #else
 		joe_snprintf_1(buf, SIZEOF(buf), " %21ld ", (long)(w->top->line + y - w->y + 1));
 #endif
-	else {
+    }
+	else
+	{
 		for (x = 0; x != SIZEOF(buf) - 1; ++x)
 			buf[x] = ' ';
 		buf[x] = 0;

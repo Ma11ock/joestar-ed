@@ -5,15 +5,16 @@ JSF
     more (CMake)
     more bisqwit-style (c.jsf is his)
 
-Extension language (Lua, probably)
-Plugin manager
-GUIs
+Extensions 
+    language (Lua, probably)
+    Plugin manager
+
+GUI
 newb-friendly mode, like JPICO (JNote?)
     Make install file install jnoterc, and make a jnote symlink
     Help buffer
 
 Vertical split windows
-Unit tests
 Automatically strip the binary
 
 org-mode, or some type of note mode

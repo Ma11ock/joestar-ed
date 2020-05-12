@@ -29,7 +29,7 @@ target_link_libraries(
 )
 
 add_test(
-    NAME    testfoo
+    NAME    joestest
     COMMAND ${BINARY}
 )
 
