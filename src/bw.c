@@ -723,13 +723,15 @@ static void gennum(BW *w, int (*screen)[COMPOSE], int *attr, SCRN *t, ptrdiff_t 
 	ptrdiff_t z, x;
 	off_t lin = w->top->line + y - w->y;
 
+	/* Line numbers are drawn here  */
 	if (lin <= w->b->eof->line)
 	{
 	    /* Relative line numbers */
-
+#ifdef HAVE_LONG_LONG
 	    if(lin == w->curlin)
 	    {
 	        /* Current line number  */
+	        joe_snprintf_1(buf, SIZEOF(buf), "%21lld ", (long long)(lin + 1));
 	        joe_snprintf_1(buf, SIZEOF(buf), " %21lld ", 0ll);
 	    }
 	    else
@@ -738,10 +740,23 @@ static void gennum(BW *w, int (*screen)[COMPOSE], int *attr, SCRN *t, ptrdiff_t 
 	        rel_linum = (rel_linum < 0) ? rel_linum * -1 : rel_linum;
 	        joe_snprintf_1(buf, SIZEOF(buf), " %21lld ", rel_linum);
 	    }
-#ifdef HAVE_LONG_LONG
-        /* Line numbers are drawn here  */
+
+        
 		//joe_snprintf_1(buf, SIZEOF(buf), " %21lld ", (long long)(w->top->line + y - w->y + 1));
 #else
+	    if(lin == w->curlin)
+	    {
+	        /* Current line number  */
+	        joe_snprintf_1(buf, SIZEOF(buf), "%21ld ", (long)(lin + 1));
+	        joe_snprintf_1(buf, SIZEOF(buf), " %21ld ", 0l);
+	    }
+	    else
+	    {
+	        long rel_linum = lin - w->curlin;
+	        rel_linum = (rel_linum < 0) ? rel_linum * -1 : rel_linum;
+	        joe_snprintf_1(buf, SIZEOF(buf), " %21lld ", rel_linum);
+	    }
+
 		joe_snprintf_1(buf, SIZEOF(buf), " %21ld ", (long)(w->top->line + y - w->y + 1));
 #endif
     }
