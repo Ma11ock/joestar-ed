@@ -83,7 +83,8 @@ OPTIONS pdefault = {
 	NULL,		/* macro to execute for existing files */
 	NULL,		/* macro to execute before saving new files */
 	NULL,		/* macro to execute before saving existing files */
-	NULL		/* macro to execute on first change */
+	NULL,		/* macro to execute on first change */
+	LINUM_NONE
 };
 
 /* Default options for file windows */
@@ -143,7 +144,8 @@ OPTIONS fdefault = {
 	NULL,		/* text_delimiters */
 	">;!#%/",	/* Characters which can indent paragraphs */
 	".",	/* Characters which begin non-paragraph lines */
-	NULL, NULL, NULL, NULL, NULL	/* macros (see above) */
+	NULL, NULL, NULL, NULL, NULL,	/* macros (see above) */
+	LINUM_REGULAR /* Absolute Line Numbers  */
 };
 
 /* Commands which just type in variable values */
@@ -202,7 +204,7 @@ void lazy_opts(B *b, OPTIONS *o)
 			b->o.charmap = find_charmap("c");
 			b->o.hex |= HEX_RESTORE_UTF8;
 		}
-		
+
 		/* Hex not allowed with CRLF */
 		if (b->o.crlf) {
 			b->o.crlf = 0;
@@ -234,8 +236,6 @@ void lazy_opts(B *b, OPTIONS *o)
 			b->o.hex |= HEX_RESTORE_PICTURE;
 		}
 	}
-	
-	
 }
 
 /* Set local options depending on file name and contents */
@@ -394,6 +394,7 @@ struct glopts {
 	{"dopadding",	0, &dopadding, NULL, 0, 0, _("Emit padding NULs"), 0, 0, 0 },
 	{"lines",	1, &env_lines, NULL, 0, 0, _("No. screen lines (if no window size ioctl)"), 0, 2, 1024 },
 	{"baud",	1, &Baud, NULL, 0, 0, _("Baud rate"), 0, 50, 32767 },
+	{"linum_mode",	5, NULL, (char *) &fdefault.linum_mode, 0, 0, _("Linum Mode"), 0, 1, 3 }, /* Low bound is set to 1 for now. When Linum_Mode is the only way to determine linum type it will be 0 */
 	{"columns",	1, &env_columns, NULL, 0, 0, _("No. screen columns (if no window size ioctl)"), 0, 2, 1024 },
 	{"skiptop",	1, &skiptop, NULL, 0, 0, _("No. screen lines to skip"), 0, 0, 64 },
 	{"notite",	0, &notite, NULL, 0, 0, _("Suppress tty init sequence"), 0, 0, 0 },

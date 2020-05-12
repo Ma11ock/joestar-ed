@@ -118,6 +118,13 @@ struct options {
 	MACRO	*msnew;		/* Macro to execute before saving new files */
 	MACRO	*msold;		/* Macro to execute before saving existing files */
 	MACRO	*mfirst;	/* Macro to execute on first change */
+	enum                /* The type of Line Numbers to display. */
+	{
+	    LINUM_NONE,     /* 0 - No Line Numbers (currently does nothing) */
+	    LINUM_REGULAR,  /* 1 - Regular, absolute Line Numbers. */
+	    LINUM_RELATIVE, /* 2 - Current line is shown as 0, all other lines are shown as their relative position to the current line. */
+	    LINUM_HYBRID    /* 3 - Same as Realtive except the current line has its absolute value. */
+	} linum_mode;
 };
 
 /* A buffer */

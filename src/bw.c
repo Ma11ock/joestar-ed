@@ -717,6 +717,11 @@ static int lgen(SCRN *t, ptrdiff_t y, int (*screen)[COMPOSE], int *attr, ptrdiff
 	return 0;
 }
 
+static void draw_linum_relative()
+{
+
+}
+
 static void gennum(BW *w, int (*screen)[COMPOSE], int *attr, SCRN *t, ptrdiff_t y, int *comp)
 {
 	char buf[24];
@@ -726,37 +731,63 @@ static void gennum(BW *w, int (*screen)[COMPOSE], int *attr, SCRN *t, ptrdiff_t 
 	/* Line numbers are drawn here  */
 	if (lin <= w->b->eof->line)
 	{
+	    switch(w->o.linum_mode)
+	    {
 	    /* Relative line numbers */
 #ifdef HAVE_LONG_LONG
-	    if(lin == w->curlin)
-	    {
-	        /* Current line number  */
-	        joe_snprintf_1(buf, SIZEOF(buf), "%21lld ", (long long)(lin + 1));
-	        joe_snprintf_1(buf, SIZEOF(buf), " %21lld ", 0ll);
-	    }
-	    else
-	    {
-	        long long rel_linum = lin - w->curlin;
-	        rel_linum = (rel_linum < 0) ? rel_linum * -1 : rel_linum;
-	        joe_snprintf_1(buf, SIZEOF(buf), " %21lld ", rel_linum);
-	    }
+        case LINUM_RELATIVE:
+        {
+            if(lin == w->curlin)
+            {
+                /* Current line number (0) */
+                joe_snprintf_1(buf, SIZEOF(buf), " %21lld ", 0ll);
+            }
+            else
+            {
+                long long rel_linum = lin - w->curlin;
+                rel_linum = (rel_linum < 0) ? rel_linum * -1 : rel_linum;
+                joe_snprintf_1(buf, SIZEOF(buf), " %21lld ", rel_linum);
+            }
+            break;
+        }
 
-        
+        case LINUM_HYBRID:
+        {
+            if(lin == w->curlin)
+            {
+                /* Current line number (Absolute)  */
+                joe_snprintf_1(buf, SIZEOF(buf), "%21lld ", (long long)(lin + 1));
+            }
+            else
+            {
+                long long rel_linum = lin - w->curlin;
+                rel_linum = (rel_linum < 0) ? rel_linum * -1 : rel_linum;
+                joe_snprintf_1(buf, SIZEOF(buf), " %21lld ", rel_linum);
+            }
+            break;
+        }
+
+        default: /* Absolute Linums */
+        {
+            joe_snprintf_1(buf, SIZEOF(buf), "%21lld ", (long long)(lin + 1));
+            break;
+        }
+	    }
 		//joe_snprintf_1(buf, SIZEOF(buf), " %21lld ", (long long)(w->top->line + y - w->y + 1));
 #else
-	    if(lin == w->curlin)
-	    {
-	        /* Current line number  */
-	        joe_snprintf_1(buf, SIZEOF(buf), "%21ld ", (long)(lin + 1));
-	        joe_snprintf_1(buf, SIZEOF(buf), " %21ld ", 0l);
+            if(lin == w->curlin)
+            {
+                /* Current line number  */
+                joe_snprintf_1(buf, SIZEOF(buf), "%21ld ", (long)(lin + 1));
+                joe_snprintf_1(buf, SIZEOF(buf), " %21ld ", 0l);
+            }
+            else
+            {
+                long rel_linum = lin - w->curlin;
+                rel_linum = (rel_linum < 0) ? rel_linum * -1 : rel_linum;
+                joe_snprintf_1(buf, SIZEOF(buf), " %21lld ", rel_linum);
+            }
 	    }
-	    else
-	    {
-	        long rel_linum = lin - w->curlin;
-	        rel_linum = (rel_linum < 0) ? rel_linum * -1 : rel_linum;
-	        joe_snprintf_1(buf, SIZEOF(buf), " %21lld ", rel_linum);
-	    }
-
 		joe_snprintf_1(buf, SIZEOF(buf), " %21ld ", (long)(w->top->line + y - w->y + 1));
 #endif
     }
