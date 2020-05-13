@@ -159,14 +159,13 @@ m4/lt~obsolete.m4
 # End of https://www.gitignore.io/api/autotools
 
 __pycache__
-src/joe
-src/joestar 
-src/termidx
-src/stringify
-src/util/stringify
-src/util/termidx
-src/util/checkwidths
-src/util/uniproc
+joe/joe
+joe/termidx
+joe/stringify
+joe/util/stringify
+joe/util/termidx
+joe/util/checkwidths
+joe/util/uniproc
 jnote
 
 **/*.o
@@ -179,3 +178,20 @@ tests/tests
 
 # CMake produces these
 tests/*.tcl
+
+rc/*
+man/
+.deps/
+joe/util/.deps
+!rc/*.in
+!rc/Makefile.am
+!man/*.in
+!man/ru/*.in
+
+rc/Makefile.in
+
+charmaps/
+!charmaps/*.in
+
+joe/autoconf.h
+joe/stamp-h1
