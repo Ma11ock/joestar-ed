@@ -159,13 +159,13 @@ m4/lt~obsolete.m4
 # End of https://www.gitignore.io/api/autotools
 
 __pycache__
-joe/joe
-joe/termidx
-joe/stringify
-joe/util/stringify
-joe/util/termidx
-joe/util/checkwidths
-joe/util/uniproc
+src/joe
+src/termidx
+src/stringify
+src/util/stringify
+src/util/termidx
+src/util/checkwidths
+src/util/uniproc
 jnote
 
 **/*.o
