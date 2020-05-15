@@ -1,7 +1,6 @@
 Theming (joe might already have this?)
 
 JSF
-    more (CMake)
     more bisqwit-style (c.jsf is his)
 
 Extensions 
@@ -28,4 +27,3 @@ relative line numbers (and hybrid line numbers)
 bug fixes:
     I had a segfualt after putting in a strange key combo. Must find out
         what was...
-    JOE cannot take cmd ARGS that have arguments (such has linum_mode)

@@ -18,7 +18,7 @@ data_doc_DATA = README.md docs/README.old docs/man.md ChangeLog docs/hacking.md 
 install-exec-hook:
 	rm -f $(DESTDIR)$(bindir)/jmacs $(DESTDIR)$(bindir)/jstar $(DESTDIR)$(bindir)/rjoe $(DESTDIR)$(bindir)/jpico
 	rm -f $(DESTDIR)$(bindir)/jmacs.exe $(DESTDIR)$(bindir)/jstar.exe $(DESTDIR)$(bindir)/rjoe.exe $(DESTDIR)$(bindir)/jpico.exe
-	for i in jmacs jstar rjoe jpico ; do $(LN_S) joe $(DESTDIR)$(bindir)/$$i ; done
+	for i in jmacs jstar rjoe jpico jnote ; do $(LN_S) joe $(DESTDIR)$(bindir)/$$i ; done
 
 uninstall-local:
 	rm -f $(DESTDIR)$(bindir)/jmacs $(DESTDIR)$(bindir)/jstar $(DESTDIR)$(bindir)/rjoe $(DESTDIR)$(bindir)/jpico

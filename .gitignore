@@ -160,6 +160,7 @@ m4/lt~obsolete.m4
 
 __pycache__
 src/joe
+src/joestar
 src/termidx
 src/stringify
 src/util/stringify

@@ -14,15 +14,17 @@ set(BINARY ${CMAKE_PROJECT_NAME}_test)
 
 project(${BINARY})
 
+add_compile_definitions(JOES_TEST=1)
+
 add_executable(
     ${BINARY}
     main.cpp
-    ublock.cpp
+    lua.cpp
 )
 
 target_link_libraries(
     ${BINARY}
-    ${CMAKE_PROJECT_NAME}
+    ${CMAKE_PROJECT_NAME}_lib
     gtest
     gtest_main
     pthread

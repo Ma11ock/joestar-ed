@@ -13,9 +13,10 @@ elseif(WIN32)
 endif()
 
 
-project(joestar_lib)
+project(joestar)
 
 enable_language(C)
+enable_testing()
 set(CMAKE_C_VERSION 99)
 cmake_policy(SET CMP0075 NEW)
 

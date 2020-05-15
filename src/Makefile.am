@@ -13,12 +13,12 @@ noinst_HEADERS = b.h blocks.h bw.h cmd.h config.h hash.h help.h kbd.h \
 	ufile.h uformat.h uisrch.h umath.h undo.h usearch.h ushell.h utag.h \
 	utils.h va.h vfile.h vs.h w.h utf8.h syntax.h charmap.h mouse.h \
 	lattr.h gettext.h builtin.h vt.h mmenu.h state.h options.h selinux.h \
-	unicode.h cclass.h frag.h colors.h
+	unicode.h cclass.h frag.h colors.h lua.h joestar.h
 
 bin_PROGRAMS = joestar
 AM_CPPFLAGS = -DJOERC="\"$(sysconf_joedir)/\"" -DJOEDATA="\"$(data_joedir)/\""
 
-# joe_LDADD = -lm
+joestar_LDADD = -llua5.3
 
 joestar_SOURCES = b.c blocks.c bw.c cmd.c hash.c help.c kbd.c macro.c main.c menu.c \
 	path.c poshist.c pw.c queue.c qw.c rc.c regex.c scrn.c tab.c termcap.c \
@@ -26,7 +26,7 @@ joestar_SOURCES = b.c blocks.c bw.c cmd.c hash.c help.c kbd.c macro.c main.c men
 	undo.c usearch.c ushell.c utag.c va.c vfile.c vs.c w.c utils.c syntax.c \
 	utf8.c selinux.c charmap.c mouse.c lattr.c gettext.c builtin.c \
 	builtins.c vt.c mmenu.c state.c options.c unicode.c \
-	cclass.c frag.c colors.c unicat-@UNICODE_VERSION@.c
+	cclass.c frag.c colors.c lua.c unicat-@UNICODE_VERSION@.c
 
 termidx_SOURCES = termidx.c
 

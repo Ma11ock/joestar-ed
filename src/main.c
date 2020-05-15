@@ -293,6 +293,9 @@ int ushowlog(W *w, int k)
 	return 1;
 }
 
+/* Tests will get linker error without this.  */
+#ifndef JOES_TEST
+
 int main(int argc, char **argv, const char * const *envv)
 {
 	CAP *cap;
@@ -738,3 +741,5 @@ exit_errors:
 
 	return 1;
 }
+
+#endif /* JOES_TEST */

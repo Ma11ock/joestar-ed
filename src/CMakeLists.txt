@@ -1,8 +1,7 @@
 set(BINARY ${CMAKE_PROJECT_NAME})
 
-add_library(
-    joestar_lib 
-    STATIC
+set(
+    SRC_SOURCES    
     b.h 
     blocks.h 
     bw.h 
@@ -59,6 +58,8 @@ add_library(
     cclass.h 
     frag.h 
     colors.h
+    lua.h
+    joestar.h
 
     # Sources
     b.c 
@@ -69,7 +70,6 @@ add_library(
     help.c 
     kbd.c 
     macro.c 
-    main.c 
     menu.c 
 	path.c 
     poshist.c 
@@ -117,13 +117,34 @@ add_library(
     frag.c 
     colors.c 
     unicat-9.0.0.c
+    lua.c
+    main.c
 )
+
+add_executable(
+    ${BINARY}
+    ${SRC_SOURCES}
+)
+
+add_library(${BINARY}_lib STATIC ${SRC_SOURCES})
 
 
 # Linking
 target_link_libraries(
-    joestar_lib
+    ${BINARY}
     ncurses
     m
     util
+    lua5.3
 )
+
+target_link_libraries(
+    ${BINARY}_lib
+    ncurses
+    m
+    util
+    lua5.3
+)
+
+
+
