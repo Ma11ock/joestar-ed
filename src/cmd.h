@@ -9,15 +9,15 @@
 /* Command entry */
 
 struct cmd {
-	const char *name;	/* Command name */
-	int	flag;		/* Execution flags */
-	int	(*func) (W *w, int k);	/* Function bound to name */
-	MACRO	*m;		/* Macro bound to name */
-	int	arg;		/* 0= arg is meaningless, 1= ok */
-	const char *negarg;	/* Command to use if arg was negative */
+	const char *name;	        /* Command name                       */
+	int	flag;		            /* Execution flags                    */
+	int	(*func) (W *w, int k);	/* Function bound to name             */
+	MACRO	*m;		            /* Macro bound to name                */
+	int	arg;		            /* 0= arg is meaningless, 1= ok       */
+	const char *negarg;	        /* Command to use if arg was negative */
 };
 
-extern CMD cmds[];		/* Built-in commands */
+extern CMD cmds[];		    /* Built-in commands */
 extern int joe_beep;		/* Enable beep on command error */
 
 /* Command execution flags */
