@@ -124,6 +124,7 @@ set(
 add_executable(
     ${BINARY}
     ${SRC_SOURCES}
+    main2.c
 )
 
 add_library(${BINARY}_lib STATIC ${SRC_SOURCES})
