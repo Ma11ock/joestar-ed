@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 
-set(default_build_type "debug")
+if(NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE "release")
+endif()
 message("Building for ${CMAKE_BUILD_TYPE}")
 
 if(UNIX AND NOT APPLE)

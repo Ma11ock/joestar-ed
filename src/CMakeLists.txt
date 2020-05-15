@@ -58,7 +58,7 @@ set(
     cclass.h 
     frag.h 
     colors.h
-    lua.h
+    jlua.h
     joestar.h
 
     # Sources
@@ -117,14 +117,14 @@ set(
     frag.c 
     colors.c 
     unicat-9.0.0.c
-    lua.c
-    main.c
+    jlua.c
+    joemain.c
 )
 
 add_executable(
     ${BINARY}
     ${SRC_SOURCES}
-    main2.c
+    main.c
 )
 
 add_library(${BINARY}_lib STATIC ${SRC_SOURCES})
