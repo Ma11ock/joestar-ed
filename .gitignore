@@ -186,9 +186,9 @@ man/
 joe/util/.deps
 !rc/*.in
 !rc/Makefile.am
-!man/*.in
-!man/ru/*.in
-!man/Makefile.am
+
+man/joe.1  
+man/Makefile  
 
 rc/Makefile.in
 
@@ -196,6 +196,10 @@ charmaps/
 !charmaps/*.in
 
 !./Makefile.in
+!src/util/Makefile.in
 
 joe/autoconf.h
 joe/stamp-h1
+
+!./Makefile.in
+!src/util/Makefile.in
