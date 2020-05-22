@@ -610,14 +610,19 @@
 [conf]
  Automake file
 *.am
+*.gitignore
  System RC file
 *rc
  Makefile
 *Makefile
 *makefile.in
+*.config/*/*config*
+*CMakeLists.txt
 *Makefile.in
 *makefile
-*AKEFILE
+*MAKEFILE
+*pacman.conf
+*.conf
 -autoindent
 -syntax conf
 -pound_comment
@@ -646,6 +651,8 @@
 *jpicorc.in
 *jnoterc
 *jnoterc.in
+*joestarrc
+*joestarrc.in
 -syntax joerc
 -highlighter_context
 
@@ -923,3 +930,4 @@
 -syntax haskell
 -vhdl_comment
 -highlighter_context
+

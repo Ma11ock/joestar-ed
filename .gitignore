@@ -183,10 +183,14 @@ rc/*
 .deps/
 joe/util/.deps
 !rc/*.in
+!rc/ftyperc
 !rc/Makefile.am
+!rc/*.sh
+!rc/*.csh
 
 man/joe.1  
 man/Makefile  
+man/ru/joe.1
 
 charmaps/klingon
 
