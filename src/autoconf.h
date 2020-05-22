@@ -317,7 +317,7 @@
 #define PACKAGE_NAME "joe"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "joe 4.6"
+#define PACKAGE_STRING "joe 0.4"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "joe"
@@ -326,7 +326,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "4.6"
+#define PACKAGE_VERSION "0.4"
 
 /* Define to 1 if the C compiler supports function prototypes. */
 #define PROTOTYPES 1
@@ -362,7 +362,7 @@
 #define TERMINFO 1
 
 /* Version number of package */
-#define VERSION "4.6"
+#define VERSION "0.4"
 
 /* Enable large inode numbers on Mac OS X 10.5.  */
 #ifndef _DARWIN_USE_64_BIT_INODE

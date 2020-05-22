@@ -21,6 +21,7 @@ make install script install into .config/joestar/
 manage DEADJOE files by putting the in .config (so theyre out of the way)
 clean up default joerc files, make them minimalist like VIM's
 auto revert (decent chance joe might already have this)
+
 relative line numbers (and hybrid line numbers)
     redo turning on and off linums, have it rely on the enum
 

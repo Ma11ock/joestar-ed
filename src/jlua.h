@@ -13,6 +13,7 @@
 #include <lua5.3/lua.h>
 #include <lua5.3/lauxlib.h>
 #include <lua5.3/lualib.h>
+#include <stdbool.h>
 
 #include "joestar.h"
 
@@ -39,9 +40,10 @@ jlua_var *jlvar_malloc(jlua_type type);     /* JLVar Dynamic Constructor */
 void jlvar_free_and_nil(jlua_var **var);    /* JLVar dynamic Destructor.
                                                Frees and sets to NULL    */
 
-jbool ensure_lua_type(jlua_var *var, jlua_type ltype); /* Ensure the lua type
+bool ensure_lua_type(jlua_var *var, jlua_type ltype); /* Ensure the lua type
                                                           of the wrapper struct
                                                           is the right type */
+
 
 void init_lua();    /* Init Lua */
 void free_lua();    /* End Lua  */

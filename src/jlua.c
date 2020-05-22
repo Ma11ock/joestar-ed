@@ -14,15 +14,15 @@
 static lua_State *L = NULL;
 
 /* Check the Lua state to make sure there are no errors. */
-static jbool check_lua(int r);
+static bool check_lua(int r);
 
 /* Ensure the lua type of the wrapper struct is the right type */
-jbool ensure_lua_type(jlua_var *var, jlua_type ltype)
+bool ensure_lua_type(jlua_var *var, jlua_type ltype)
 {
-    jbool result = JFALSE;
+    bool result = false;
     if(var->type == ltype)
     {
-        result = JTRUE;
+        result = true;
     }
 
     return result;
@@ -69,13 +69,13 @@ void free_lua()
 }
 
 /* Check the Lua state to make sure there are no errors. */
-static jbool check_lua(int r)
+static bool check_lua(int r)
 {
-    jbool result = JTRUE;
+    bool result = true;
     if(r != LUA_OK)
     {
         //= lua_tostring(L, -1); TODO handle error
-        result = JFALSE;
+        result = false;
     }
 
     return result;

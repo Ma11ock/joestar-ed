@@ -9,14 +9,14 @@ TEST(lua, ensure_type_true)
 {
     jlua_var var = jlvar_init(LUA_NIL);
 
-    ASSERT_EQ(ensure_lua_type(&var, LUA_NIL), JTRUE);
+    ASSERT_EQ(ensure_lua_type(&var, LUA_NIL), true);
 }
 
 TEST(lua, ensure_type_false)
 {
     jlua_var var = jlvar_init(LUA_NIL);
 
-    ASSERT_EQ(ensure_lua_type(&var, LUA_REAL), JFALSE);
+    ASSERT_EQ(ensure_lua_type(&var, LUA_REAL), false);
 }
 
 TEST(lua, destructor)

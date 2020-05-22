@@ -524,7 +524,7 @@ int joe_main(int argc, char **argv, const char * const *envv)
     init_lua();
 	for (c = 1; argv[c]; ++c) {
 		if (!strcmp(argv[c], "-help") || !strcmp(argv[c], "--help")) {
-			printf("Joe's Own Editor v%s\n\n", VERSION);
+			printf("Joestar v%s\n\n", VERSION);
 			printf("Usage: %s [global-options] [ [local-options] filename ]...\n\n", argv[0]);
 			printf("Global options:\n");
 			cmd_help(0);

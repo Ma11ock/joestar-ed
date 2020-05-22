@@ -188,11 +188,14 @@ joe/util/.deps
 !rc/Makefile.am
 !man/*.in
 !man/ru/*.in
+!man/Makefile.am
 
 rc/Makefile.in
 
 charmaps/
 !charmaps/*.in
+
+!./Makefile.in
 
 joe/autoconf.h
 joe/stamp-h1

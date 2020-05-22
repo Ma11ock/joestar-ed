@@ -27,7 +27,7 @@ const char *builtins[]=
 		"-rmsg  %S Row %4r Col %3c \n"
 		"-smsg ** Line %r Col %c Offset %o(0x%O) %e %a(0x%A) Width %w ** \n"
 		"-zmsg ** Line %r Col %c Offset %o(0x%O) ** \n"
-		"-xmsg \\i Joe's Own Editor %v (%b) ** Type \\bCtrl-K Q\\b to exit or \\bCtrl-K H\\b for help **\\i\n"
+		"-xmsg \\i joestar %v (%b) ** Type \\bCtrl-K Q\\b to exit or \\bCtrl-K H\\b for help **\\i\n"
 		"-aborthint ^C\n"
 		"-helphint ^K H\n"
 		"-highlight\n"
