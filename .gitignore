@@ -112,7 +112,6 @@ cscope.po.out
 ### Autotools ###
 # http://www.gnu.org/software/automake
 
-Makefile.in
 /ar-lib
 /mdate-sh
 /py-compile
@@ -181,7 +180,6 @@ tests/tests
 tests/*.tcl
 
 rc/*
-man/
 .deps/
 joe/util/.deps
 !rc/*.in
@@ -190,16 +188,8 @@ joe/util/.deps
 man/joe.1  
 man/Makefile  
 
-rc/Makefile.in
-
-charmaps/
-!charmaps/*.in
-
-!./Makefile.in
-!src/util/Makefile.in
+charmaps/klingon
 
 joe/autoconf.h
 joe/stamp-h1
 
-!./Makefile.in
-!src/util/Makefile.in
