@@ -751,7 +751,7 @@ static void gennum(BW *w, int (*screen)[COMPOSE], int *attr, SCRN *t, ptrdiff_t 
                 if(lin == w->curlin)
                 {
                     /* Current line number (Absolute)  */
-                    joe_snprintf_1(buf, SIZEOF(buf), "%21lld ", (long long)(lin + 1));
+                    joe_snprintf_1(buf, SIZEOF(buf), " %21lld ", (long long)(lin + 1));
                 }
                 else
                 {
@@ -790,7 +790,7 @@ static void gennum(BW *w, int (*screen)[COMPOSE], int *attr, SCRN *t, ptrdiff_t 
                 if(lin == w->curlin)
                 {
                     /* Current line number (Absolute)  */
-                    joe_snprintf_1(buf, SIZEOF(buf), "%21ld ", (long)(lin + 1));
+                    joe_snprintf_1(buf, SIZEOF(buf), " %21ld ", (long)(lin + 1));
                 }
                 else
                 {

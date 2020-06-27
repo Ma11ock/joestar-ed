@@ -14,7 +14,7 @@
 static lua_State *L = NULL;
 
 /* Check the Lua state to make sure there are no errors. */
-static bool check_lua(int r);
+static bool check_lua(lua_State *ls, int r);
 
 /* Ensure the lua type of the wrapper struct is the right type */
 bool ensure_lua_type(jlua_var *var, jlua_type ltype)
@@ -59,6 +59,18 @@ void init_lua()
 {
     L = luaL_newstate();
     luaL_openlibs(L);
+
+    /* TODO for testing purposes we will simply load joesinit.lua. */
+    if(check_lua(L, luaL_dofile(L, "joesinit.lua")))
+    {
+        lua_getglobal(L, "kek");
+        if(lua_isnumber(L, -1))
+            fprintf(stderr, "%d\n", (int)lua_tointeger(L, -1));
+    }
+    else
+    {
+        fprintf(stderr, "Error!\n");
+    }
 }
 
 /* End Lua  */
@@ -69,7 +81,7 @@ void free_lua()
 }
 
 /* Check the Lua state to make sure there are no errors. */
-static bool check_lua(int r)
+static bool check_lua(lua_State *ls, int r)
 {
     bool result = true;
     if(r != LUA_OK)
