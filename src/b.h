@@ -125,6 +125,7 @@ struct options {
 	    LINUM_RELATIVE, /* 2 - Current line is shown as 0, all other lines are shown as their relative position to the current line. */
 	    LINUM_HYBRID    /* 3 - Same as Realtive except the current line has its absolute value. */
 	} linum_mode;
+	int electric_parens; /* Flag to set autocompletion of parenthesis. */
 };
 
 /* A buffer */

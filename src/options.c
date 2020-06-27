@@ -1,4 +1,4 @@
-/*
+ /*
  *	JOE options
  *	Copyright
  *		(C) 1992 Joseph H. Allen
@@ -150,7 +150,7 @@ OPTIONS fdefault = {
 
 /* Commands which just type in variable values */
 
-int ucharset(W *w, int k)
+ int ucharset(W *w, int k)
 {
 	const char *s;
 	BW *bw;
@@ -338,6 +338,7 @@ struct glopts {
 	{"transpose",0, &transpose, NULL, _("Menu is transposed"), _("Menus are not transposed"), _("Transpose menus mode"), 0, 0, 0 },
 	{"crlf",	4, NULL, (char *) &fdefault.crlf, _("CR-LF is line terminator"), _("LF is line terminator"), _("CR-LF (MS-DOS) mode"), 0, 0, 0 },
 	{"linums",	4, NULL, (char *) &fdefault.linums, _("Line numbers enabled"), _("Line numbers disabled"), _("Line numbers mode"), 0, 0, 0 },
+    {"electric_parens", 0, &fdefault.electric_parens, NULL, _("Electric pairs enabled"), _("Electric pairs disabled"), _("Electric Parens mode, autocomplete parenthesis"), 0, 0, 0},
 	{"hiline",	4, NULL, (char *) &fdefault.hiline, _("Highlighting cursor line"), _("Not highlighting cursor line"), _("Highlight cursor line"), 0, 0, 0 },
 	{"marking",	0, &marking, NULL, _("Anchored block marking on"), _("Anchored block marking off"), _("Region marking mode"), 0, 0, 0 },
 	{"asis",	0, &dspasis, NULL, _("Characters above 127 shown as-is"), _("Characters above 127 shown in inverse"), _("Display meta chars as-is mode"), 0, 0, 0 },
@@ -406,7 +407,7 @@ struct glopts {
 	{"assume_color", 0, &assume_color, NULL, 0, 0, _("Assume terminal supports color"), 0, 0, 0 },
 	{"assume_256color", 0, &assume_256color, NULL, 0, 0, _("Assume terminal supports 256 colors"), 0, 0, 0 },
 	{"joexterm", 0, &joexterm, NULL, 0, 0, _("Assume xterm patched for JOE"), 0, 0, 0 },
-	{ NULL,		0, NULL, NULL, NULL, NULL, NULL, 0, 0, 0 }
+	{ NULL,		0, NULL, NULL, NULL, NULL, NULL, 0, 0, 0 },
 };
 
 /* Print command line help */
