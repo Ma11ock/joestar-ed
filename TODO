@@ -1,5 +1,9 @@
 Theming (joe might already have this?)
 
+Lua:
+    Move the joe glopts to a linked list,
+	make it so you can make more vars at runtime
+
 JSF
     more bisqwit-style (c.jsf is his)
 
@@ -28,3 +32,5 @@ relative line numbers (and hybrid line numbers)
 bug fixes:
     I had a segfualt after putting in a strange key combo. Must find out
         what was...
+
+mention bisqwit's c.jsf file in the README

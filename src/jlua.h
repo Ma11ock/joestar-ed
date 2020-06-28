@@ -19,12 +19,15 @@
 
 typedef enum
 {
-    LUA_NIL,        /* Nil                  */
-    LUA_REAL,       /* Real number (float)  */
-    LUA_STRING,     /* String               */
-    LUA_TABLE,      /* Table                */
-    LUA_BOOL,       /* Boolean              */
-    LUA_FUNCTION    /* Function             */
+    LUA_NIL        = LUA_TNIL,           /* Nil                  */
+    LUA_BOOL       = LUA_TBOOLEAN,       /* Boolean              */
+    LUA_LIGHTUDATA = LUA_TLIGHTUSERDATA, /* Light User data      */
+    LUA_REAL       = LUA_TNUMBER,        /* Real number (float)  */
+    LUA_STRING     = LUA_TSTRING,        /* String               */
+    LUA_TABLE      = LUA_TTABLE,         /* Table                */
+    LUA_FUNCTION   = LUA_TFUNCTION,      /* Function             */
+    LUA_USERDATA   = LUA_TUSERDATA,      /* User data            */
+    LUA_THREAD     = LUA_TTHREAD         /* Thread               */
 } jlua_type;
 
 /* Wrapper for Lua type */

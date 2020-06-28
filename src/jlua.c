@@ -54,6 +54,44 @@ void jlvar_free_and_nil(jlua_var **var)
     *var = NULL;
 }
 
+double get_global_float(const char *name)
+{
+    double result;
+    lua_getglobal(L, name);
+    result = lua_tonumber(L, 1);
+    lua_pop(L, 1);
+    return result;
+}
+
+void joe_set(const char *name, const char *value, jlua_type ltype)
+{
+
+}
+
+void run_lua_script(const char *filepath)
+{
+    if(luaL_dofile(L, filepath) != LUA_OK)
+    {
+        goto lua_fail;
+    }
+
+    lua_pushglobaltable(L);
+    lua_pushnil(L);
+
+    while(lua_next(L, -2) != 0) /* Pop NIL, push name, value */
+    {
+
+        lua_pop(L, 1);
+    }
+    lua_pop(L, 1); /* Remove global table */
+    fprintf(stderr, "Lua end\n");
+	return;
+
+lua_fail:
+    /* TODO failstate */
+    fprintf(stderr, "Not cool.\n");
+}
+
 /* Init Lua */
 void init_lua()
 {
@@ -61,16 +99,7 @@ void init_lua()
     luaL_openlibs(L);
 
     /* TODO for testing purposes we will simply load joesinit.lua. */
-    if(check_lua(L, luaL_dofile(L, "joesinit.lua")))
-    {
-        lua_getglobal(L, "kek");
-        if(lua_isnumber(L, -1))
-            fprintf(stderr, "%d\n", (int)lua_tointeger(L, -1));
-    }
-    else
-    {
-        fprintf(stderr, "Error!\n");
-    }
+    run_lua_script("joesinit.lua");
 }
 
 /* End Lua  */

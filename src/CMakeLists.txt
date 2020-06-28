@@ -60,6 +60,7 @@ set(
     colors.h
     jlua.h
     joestar.h
+    bridge.h
 
     # Sources
     b.c 
@@ -119,6 +120,7 @@ set(
     unicat-9.0.0.c
     jlua.c
     joemain.c
+    bridge.c
 )
 
 add_executable(

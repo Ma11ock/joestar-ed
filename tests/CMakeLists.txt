@@ -20,6 +20,7 @@ add_executable(
     ${BINARY}
     main.cpp
     lua.cpp
+    bridge.cpp
 )
 
 target_link_libraries(
