@@ -2,7 +2,7 @@ sysconf_joedir = $(sysconfdir)/joe
 data_joedir = $(datadir)/joe
 data_docdir = $(docdir)
 
-sysconf_joe_built = joerc jicerc.ru jmacsrc jstarrc rjoerc jpicorc joerc.zh_TW
+sysconf_joe_built = joerc jicerc.ru jmacsrc jstarrc rjoerc jpicorc joerc.zh_TW joestarrc
 
 sysconf_joe_DATA = $(sysconf_joe_built) ftyperc shell.sh shell.csh
 
@@ -19,6 +19,9 @@ jicerc.ru : jicerc.ru.in
 
 jmacsrc : jmacsrc.in
 	LC_ALL=C sed 's,@JOERC\@,$(sysconf_joedir),; s,@JOEDOC\@,$(data_docdir),; s,@JOEDATA\@,$(data_joedir),; s,@SPELL\@,@SPELL@,' $(srcdir)/jmacsrc.in > $@
+
+joestarrc : joestarrc.in
+	LC_ALL=C sed 's,@JOERC\@,$(sysconf_joedir),; s,@JOEDOC\@,$(data_docdir),; s,@JOEDATA\@,$(data_joedir),; s,@SPELL\@,@SPELL@,' $(srcdir)/joestarrc.in > $@
 
 jstarrc : jstarrc.in
 	LC_ALL=C sed 's,@JOERC\@,$(sysconf_joedir),; s,@JOEDOC\@,$(data_docdir),; s,@JOEDATA\@,$(data_joedir),; s,@SPELL\@,@SPELL@,' $(srcdir)/jstarrc.in > $@

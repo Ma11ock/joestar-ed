@@ -1,5 +1,6 @@
 #include "bridge.h"
 
+/* Create a hash from range 0-HASH_MAX for a string */
 unsigned long var_hash(const char *key)
 {
     int sum = 0;
