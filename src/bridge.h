@@ -20,7 +20,7 @@ struct joe_var
 
 struct joe_var_node
 {
-    struct joe_var_node *prev = NULL;
+    struct joe_var_node *prev;
     struct joe_var var;
 };
 
