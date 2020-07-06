@@ -47,7 +47,7 @@ TEST(bridge, hash)
     {
         size_t s = genRandomSize();
         std::string testSubject = gen_random(s);
-        results.push_back(var_hash(testSubject.c_str()));
+        results.push_back(joes_var_hash(testSubject.c_str()));
     }
 
     for(size_t i = 0; i < HASH_MAX; i++)
@@ -71,11 +71,11 @@ TEST(bridge, hash)
 
 TEST(bridge, linkedlist)
 {
-//    joe_var test = {"Wow", LUA_STRING, "l"};
- //   add_var(test);
-  //  auto v = get_var_by_name("Wow");
+      joe_var test = {"Wow", LUA_STRING, "l"};
+      joes_add_var(test);
+      auto v = joes_get_var_by_name("Wow");
 
-    ASSERT_EQ(NULL, NULL);
+      ASSERT_EQ(NULL, NULL);
 }
 
 TEST(bridge, linkedlistMultiple)
@@ -97,14 +97,14 @@ TEST(bridge, linkedlistMultiple)
 
     for(const auto &s : strings)
     {
-        add_var({ s.c_str(), LUA_STRING, "l" });
+        joes_add_var({ s.c_str(), LUA_STRING, "l" });
     }
 
     for(const auto &s :  strings)
     {
-        auto v = get_var_by_name(s.c_str());
+        auto v = joes_get_var_by_name(s.c_str());
         ASSERT_EQ(strcmp(v.name, s.c_str()), 0);
     }
 
-    free_vars();
+    joes_free_vars();
 }
