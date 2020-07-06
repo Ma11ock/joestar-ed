@@ -21,7 +21,7 @@ struct joe_var_node *make_node(struct joe_var var)
 }
 
 /* Add the variable var to the list at local */
-void add_var_to_list(struct joe_var var, ptrdiff_t local)
+void add_var_to_list(struct joe_var var, size_t local)
 {
     struct joe_var_node *head = var_hash_map[local];
     struct joe_var_node *tmp  = NULL;
@@ -45,15 +45,15 @@ void add_var_to_list(struct joe_var var, ptrdiff_t local)
 
 
 /* Create a hash from range 0-HASH_MAX for a string */
-ptrdiff_t var_hash(const char *key)
+size_t var_hash(const char *key)
 {
-    ptrdiff_t sum = 0;
+    size_t sum = 0;
     for(char c = *key++; c != '\0'; c = *key++)
     {
-        sum += (ptrdiff_t)c * HASH_MAX;
+        sum += (size_t)c * HASH_MAX;
     }
 
-    return sum % (ptrdiff_t)HASH_MAX;
+    return sum % (size_t)HASH_MAX;
 }
 
 /* Create a new joe_var */

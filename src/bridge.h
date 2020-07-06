@@ -31,7 +31,7 @@ struct joe_var
 /* Add a variable to the map */
 void add_var(struct joe_var var);
 /* Create a hash from range 0-HASH_MAX for a string */
-ptrdiff_t var_hash(const char *key);
+size_t var_hash(const char *key);
 /* Create a new joe_var  */
 struct joe_var *joe_var_init(const char *name);
 /* Free a joe_var */
