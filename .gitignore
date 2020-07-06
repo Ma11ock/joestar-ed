@@ -196,5 +196,6 @@ charmaps/klingon
 
 joe/autoconf.h
 joe/stamp-h1
+src/Makefile.in
 
 **/out.txt

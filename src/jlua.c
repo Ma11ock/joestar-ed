@@ -12,6 +12,7 @@
 #include "types.h"
 
 static lua_State *L = NULL;
+#include "bridge.h"
 
 /* Check the Lua state to make sure there are no errors. */
 static bool check_lua(lua_State *ls, int r);
@@ -107,6 +108,7 @@ void free_lua()
 {
     lua_close(L);
     L = NULL;
+    free_vars();
 }
 
 /* Check the Lua state to make sure there are no errors. */

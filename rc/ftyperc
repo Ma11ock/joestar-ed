@@ -433,40 +433,6 @@
 -single_quoted
 -pound_comment
 
- C-shell
-[csh]
-*
-+#![ 	]*[^\n 	]*/csh\>
-+#![ 	]*[^\n 	]*/tcsh\>
-*.csh
-*.login
-*.logout
-*.tcsh
-*.tcshrc
--autoindent
--title
--syntax csh
--pound_comment
--highlighter_context
-
- Shell
-[sh]
-*
-+#![ 	]*[^\n 	]*/sh\>
-+#![ 	]*[^\n 	]*/bash\>
-*.sh
-*profile
-*.bash
-*.bashrc
-*.bash_login
-*.bash_logout
--autoindent
--title
--syntax sh
--highlighter_context
--pound_comment
--text_delimiters do=done:if=elif=else=fi:case=esac
-
  Lisp
 [lisp]
 *.lisp
@@ -476,19 +442,6 @@
 -title
 -syntax lisp
 -semi_comment
--highlighter_context
-
- Korn shell
-[ksh]
-*
-+#![ 	]*[^\n 	]*/ksh\>
-*.ksh
--autoindent
--title
--syntax sh
--highlighter_context
--pound_comment
--text_delimiters do=done:if=elif=else=fi:case=esac
 -highlighter_context
 
  PASCAL
@@ -929,5 +882,56 @@
 -smartbacks
 -syntax haskell
 -vhdl_comment
+-highlighter_context
+
+
+ C-shell
+[csh]
+*
++#![ 	]*[^\n 	]*/csh\>
++#![ 	]*[^\n 	]*/tcsh\>
+*.csh
+*.login
+*.logout
+*.tcsh
+*.tcshrc
+-autoindent
+-title
+-syntax csh
+-pound_comment
+-highlighter_context
+
+ Shell
+[sh]
+*
++#![ 	]*[^\n 	]*/sh\>
++#![ 	]*[^\n 	]*/bash\>
+*.sh
+*.zsh
+*.bash
+*profile
+*.bash
+*.bashrc
+*.bash_login
+*.bash_logout
+*.zshrc
+-autoindent
+-title
+-syntax sh
+-highlighter_context
+-pound_comment
+-text_delimiters do=done:if=elif=else=fi:case=esac
+
+ Korn shell
+[ksh]
+*
++#![ 	]*[^\n 	]*/ksh\>
+*.ksh
+-autoindent
+-title
+-syntax sh
+-highlighter_context
+-pound_comment
+-text_delimiters do=done:if=elif=else=fi:case=esac
 -highlighter_context
 

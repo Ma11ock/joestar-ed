@@ -4,6 +4,8 @@
 #include <random>
 #include <chrono>
 #include <iostream>
+#include <fstream>
+#include <string.h>
 
 extern "C"
 {
@@ -65,4 +67,44 @@ TEST(bridge, hash)
 
     ASSERT_LT((double)tests / (double)collisions, 20.0); // assert that no more than 20% of the
                                                          // hashes collide
+}
+
+TEST(bridge, linkedlist)
+{
+//    joe_var test = {"Wow", LUA_STRING, "l"};
+ //   add_var(test);
+  //  auto v = get_var_by_name("Wow");
+
+    ASSERT_EQ(NULL, NULL);
+}
+
+TEST(bridge, linkedlistMultiple)
+{
+    std::vector<std::string> strings;
+    std::ifstream ifs("randomStrings.txt");
+
+    if(!ifs.is_open())
+    {
+        std::cerr << "Er: linkedlistMultiple: No strings file.\n";
+        ASSERT_EQ(1, 0);
+    }
+
+    std::string line;
+    while(std::getline(ifs, line))
+    {
+        strings.push_back(line);
+    }
+
+    for(const auto &s : strings)
+    {
+        add_var({ s.c_str(), LUA_STRING, "l" });
+    }
+
+    for(const auto &s :  strings)
+    {
+        auto v = get_var_by_name(s.c_str());
+        ASSERT_EQ(strcmp(v.name, s.c_str()), 0);
+    }
+
+    free_vars();
 }
