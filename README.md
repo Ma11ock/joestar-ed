@@ -9,8 +9,8 @@ theming, and other features.</p>
 # Building
 
 <p>joestar requres a C99 compliant compiler (perferably gcc or clang), 
-and `make`. Its only dependency at the moment is libc. Make sure you have
-the basic development packages on your distro (or MinGW) on Windows.</p>
+and `make`. Its dependencies are libc and Lua52 + Lua53. Make sure you have 
+development packages on your distro (or MinGW) on Windows.</p>
 
 Then: 
 ```shell
@@ -20,6 +20,5 @@ cd joestar
 ./configure
 make
 strip src/joestar
-```    
-
-The binary will be src/joestar.
+sudo make install
+```

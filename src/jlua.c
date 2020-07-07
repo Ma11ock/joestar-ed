@@ -23,7 +23,14 @@ double get_global_float(const char *name)
     return result;
 }
 
+/* Set joestar variable value */
 void joe_set(const char *name, const char *value, jlua_type ltype)
+{
+
+}
+
+/* Toggle joestar boolean variable */
+void joe_toggle(const char *name)
 {
 
 }
@@ -60,6 +67,7 @@ void init_lua()
 
     /* TODO for testing purposes we will simply load joesinit.lua. */
     run_lua_script("joesinit.lua");
+    joes_init_bridge(); /* initialize the joestar builtins */
 }
 
 /* End Lua  */
@@ -67,7 +75,7 @@ void free_lua()
 {
     lua_close(L);
     L = NULL;
-    joes_free_vars();
+    joes_free_vars(); /* destroy joestar builtins */
 }
 
 /* Check the Lua state to make sure there are no errors. */

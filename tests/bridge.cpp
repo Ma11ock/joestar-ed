@@ -71,11 +71,12 @@ TEST(bridge, hash)
 
 TEST(bridge, linkedlist)
 {
-      joe_var test = {"Wow", LUA_STRING, "l"};
-      joes_add_var(test);
-      auto v = joes_get_var_by_name("Wow");
+      joe_var *test = new joe_var{"Wow"};
+      joes_add_var_by_ref(test);
+      joe_var *v = joes_get_var_by_name("Wow");
 
-      ASSERT_EQ(NULL, NULL);
+      ASSERT_EQ(strcmp(v->name, test->name), 0);
+      joes_free_vars();
 }
 
 TEST(bridge, linkedlistMultiple)
@@ -85,8 +86,8 @@ TEST(bridge, linkedlistMultiple)
 
     if(!ifs.is_open())
     {
-        std::cerr << "Er: linkedlistMultiple: No strings file.\n";
-        ASSERT_EQ(1, 0);
+        std::cerr << "Er: linkedlistMultiple: No strings file. Generating.\n";
+        system("tr -d '\n' < Makefile | tr ' ' '\n' > randomStrings.txt");
     }
 
     std::string line;
@@ -97,13 +98,13 @@ TEST(bridge, linkedlistMultiple)
 
     for(const auto &s : strings)
     {
-        joes_add_var({ s.c_str(), LUA_STRING, "l" });
+        joes_add_var(s.c_str(), LUA_STRING, NULL, true, NULL);
     }
 
     for(const auto &s :  strings)
     {
-        auto v = joes_get_var_by_name(s.c_str());
-        ASSERT_EQ(strcmp(v.name, s.c_str()), 0);
+        joe_var *v = joes_get_var_by_name(s.c_str());
+        ASSERT_EQ(strcmp(v->name, s.c_str()), 0);
     }
 
     joes_free_vars();

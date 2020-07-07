@@ -8,14 +8,14 @@
 struct joe_var_node
 {
     struct joe_var_node *next;
-    struct joe_var var;
+    struct joe_var      *var;
 };
 
 static struct joe_var_node *var_hash_map[HASH_MAX];
 
-const struct joe_var DEFAULT_JOE_VAR = { NULL, LUA_NIL };
+const struct joe_var DEFAULT_JOE_VAR = { NULL, LUA_NIL, NULL, false, NULL };
 
-struct joe_var_node *make_node(struct joe_var var)
+struct joe_var_node *make_node(struct joe_var *var)
 {
      struct joe_var_node *new_node =
         (struct joe_var_node*)joe_malloc(sizeof(struct joe_var_node));
@@ -26,7 +26,7 @@ struct joe_var_node *make_node(struct joe_var var)
 }
 
 /* Add the variable var to the list at local */
-void add_var_to_list(struct joe_var var, size_t local)
+void add_var_to_list(struct joe_var *var, size_t local)
 {
     struct joe_var_node **head = &var_hash_map[local];
 
@@ -64,9 +64,16 @@ size_t joes_var_hash(const char *key)
 }
 
 /* Add a variable to the map */
-void joes_add_var(struct joe_var var)
+void joes_add_var(const char *name, jlua_type type, void *data, bool global, void *value)
 {
-    add_var_to_list(var, joes_var_hash(var.name));
+    struct joe_var *newVar = (struct joe_var*)joe_malloc(sizeof(struct joe_var));
+
+    *newVar = (struct joe_var)
+              { .name = name,
+                .type = type,
+                .data = data,
+                .global = global };
+    add_var_to_list(newVar, joes_var_hash(name));
 }
 
 /* Destroys the var hash map */
@@ -81,6 +88,7 @@ void joes_free_vars()
         {
             /* Traverse and free the list */
             tmp = head->next;
+            //joe_free(head->var);
             joe_free(head);
             head = tmp;
             var_hash_map[i] = NULL;
@@ -90,18 +98,18 @@ void joes_free_vars()
 }
 
 /* Get joe_var by its name. */
-struct joe_var joes_get_var_by_name(const char *name)
+struct joe_var *joes_get_var_by_name(const char *name)
 {
     if(name == NULL)
-        return DEFAULT_JOE_VAR;
+        return NULL;
 
     struct joe_var_node *head   = var_hash_map[joes_var_hash(name)];
-    struct joe_var       result = DEFAULT_JOE_VAR;
+    struct joe_var      *result = NULL;
 
     while(head != NULL)
     {
 
-        if(strcmp(head->var.name, name) == 0)
+        if(strcmp(head->var->name, name) == 0)
         {
             result = head->var;
             head = NULL;
@@ -116,7 +124,21 @@ struct joe_var joes_get_var_by_name(const char *name)
 }
 
 /* Ensure the lua type of the wrapper struct is the right type */
-bool ensure_lua_type(struct joe_var var, jlua_type ltype)
+bool ensure_lua_type(struct joe_var *var, jlua_type ltype)
 {
-    return (var.type == ltype);
+    return (var->type == ltype);
+}
+
+/* Joestar variables */
+/* (really wish i could hash these at compile time...) */
+void joes_init_bridge()
+{
+    //joes_add_var({ "UserName",  LUA_STRING, NULL, true, NULL });
+    //joes_add_var({ "UserEmail", LUA_STRING, NULL, true, NULL });
+}
+
+/* Add variable by reference */
+void joes_add_var_by_ref(struct joe_var *var)
+{
+    add_var_to_list(var, joes_var_hash(var->name));
 }
