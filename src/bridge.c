@@ -5,6 +5,10 @@
 #include <string.h>
 #include <stdint.h>
 
+struct joe_var usermail = { "UserMail", LUA_STRING, NULL, true, NULL, false };
+struct joe_var username = { "UserName", LUA_STRING, NULL, true, NULL, false };
+
+
 struct joe_var_node
 {
     struct joe_var_node *next;
@@ -63,19 +67,6 @@ size_t joes_var_hash(const char *key)
     return sum % (size_t)HASH_MAX;
 }
 
-/* Add a variable to the map */
-void joes_add_var(const char *name, jlua_type type, void *data, bool global, void *value)
-{
-    struct joe_var *newVar = (struct joe_var*)joe_malloc(sizeof(struct joe_var));
-
-    *newVar = (struct joe_var)
-              { .name = name,
-                .type = type,
-                .data = data,
-                .global = global };
-    add_var_to_list(newVar, joes_var_hash(name));
-}
-
 /* Destroys the var hash map */
 void joes_free_vars()
 {
@@ -88,7 +79,8 @@ void joes_free_vars()
         {
             /* Traverse and free the list */
             tmp = head->next;
-            //joe_free(head->var);
+            if(head->var->free)
+                joe_free(head->var);
             joe_free(head);
             head = tmp;
             var_hash_map[i] = NULL;
@@ -129,16 +121,112 @@ bool ensure_lua_type(struct joe_var *var, jlua_type ltype)
     return (var->type == ltype);
 }
 
+/* Add a variable to the map */
+void joes_add_var(const char *name, jlua_type type, void *data, bool global)
+{
+    struct joe_var *newVar = (struct joe_var*)joe_malloc(sizeof(struct joe_var));
+
+    *newVar = (struct joe_var)
+              { .name = name,
+                .type = type,
+                .data = data,
+                .global = global,
+                .str_value = NULL,
+                .free = true };
+    add_var_to_list(newVar, joes_var_hash(name));
+}
+
+
+
 /* Joestar variables */
 /* (really wish i could hash these at compile time...) */
 void joes_init_bridge()
 {
-    //joes_add_var({ "UserName",  LUA_STRING, NULL, true, NULL });
-    //joes_add_var({ "UserEmail", LUA_STRING, NULL, true, NULL });
+    joes_add_var_by_ref(&usermail);
+    joes_add_var_by_ref(&username);
 }
 
 /* Add variable by reference */
 void joes_add_var_by_ref(struct joe_var *var)
 {
     add_var_to_list(var, joes_var_hash(var->name));
+}
+
+/* Add a variable to the map */
+void joes_add_var_struct(struct joe_var var)
+{
+    joes_add_var(var.name, var.type, var.data, var.global);
+}
+
+/* gets string value from variable 'name' */
+const char *joes_get_vstring(const char *name)
+{
+    struct joe_var *tmp = joes_get_var_by_name(name);
+
+    return (tmp == NULL) ? NULL : tmp->str_value;
+}
+
+/* gets number value from variable 'name' */
+double joes_get_vreal(const char *name)
+{
+    struct joe_var *tmp = joes_get_var_by_name(name);
+
+    return (tmp == NULL) ? NAN : tmp->num_value;
+}
+
+/* gets bool value from variable 'name' */
+ bool joes_get_vbool(const char *name)
+{
+    struct joe_var *tmp = joes_get_var_by_name(name);
+
+    return (tmp == NULL) ? false : tmp->bool_value;
+}
+
+/* setter */
+void joes_set_val(const char *name, const void *data)
+{
+    if(name == NULL)
+        return;
+
+    struct joe_var *tmp = joes_get_var_by_name(name);
+
+    if(data == NULL)
+    {
+        tmp->str_value = NULL;
+        tmp->data = NULL;
+        return;
+    }
+
+    switch(tmp->type)
+    {
+    case LUA_STRING:
+        break;
+    default:
+        break;
+    }
+}
+
+void joes_set_var_string(const char *name, const char *str)
+{
+    if(name == NULL || str == NULL)
+        return;
+
+    struct joe_var *tmp = joes_get_var_by_name(name);
+    /*TODO log these errors*/
+    if(tmp == NULL || tmp->type != LUA_STRING)
+        return;
+
+    /* Set data if necessary */
+    if(tmp->data != NULL)
+    {
+        tmp->data = str;
+    }
+
+    tmp->str_value = NULL;
+}
+
+/* setter for reference  */
+void joes_set_val_ref(struct joe_var *var, const void *data)
+{
+
 }

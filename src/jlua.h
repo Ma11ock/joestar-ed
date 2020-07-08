@@ -33,5 +33,6 @@ typedef enum
 
 void init_lua();    /* Init Lua */
 void free_lua();    /* End Lua  */
+void jlua_set_string(const char *var_name, const char *str);
 
 #endif /* JOES_LUA_H */
