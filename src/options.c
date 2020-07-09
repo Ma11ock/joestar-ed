@@ -395,7 +395,7 @@ struct glopts {
 	{"dopadding",	0, &dopadding, NULL, 0, 0, _("Emit padding NULs"), 0, 0, 0 },
 	{"lines",	1, &env_lines, NULL, 0, 0, _("No. screen lines (if no window size ioctl)"), 0, 2, 1024 },
 	{"baud",	1, &Baud, NULL, 0, 0, _("Baud rate"), 0, 50, 32767 },
-	{"linum_mode",	5, NULL, (char *) &fdefault.linum_mode, 0, 0, _("Linum Mode"), 0, 1, 3 }, /* Low bound is set to 1 for now. When Linum_Mode is the only way to determine linum type it will be 0 */
+	{"linum_mode",	5, NULL, (char *) &fdefault.linum_mode, 0, 0, _("Linum Mode"), 0, 1, 3 }, /* Low bound is set to 1 for now. When Linum_Mode is the only way to determine linum type it will be 0 TODO */
 	{"columns",	1, &env_columns, NULL, 0, 0, _("No. screen columns (if no window size ioctl)"), 0, 2, 1024 },
 	{"skiptop",	1, &skiptop, NULL, 0, 0, _("No. screen lines to skip"), 0, 0, 64 },
 	{"notite",	0, &notite, NULL, 0, 0, _("Suppress tty init sequence"), 0, 0, 0 },
@@ -553,7 +553,7 @@ B *ftypehist = NULL;
  * glopt(name,arg,options,1): set file local option
  */
 
-int glopt(char *s, char *arg, OPTIONS *options, int set)
+int glopt(const char *s, char *arg, OPTIONS *options, int set)
 {
 	int val;
 	int ret = 0;
@@ -627,7 +627,7 @@ int glopt(char *s, char *arg, OPTIONS *options, int set)
 					if (zz >= opt->low && zz <= opt->high)
 						*(off_t *) ((char *)
 							  options + opt->ofst) = zz;
-				} 
+				}
 			}
 			if (arg)
 				ret = 2;

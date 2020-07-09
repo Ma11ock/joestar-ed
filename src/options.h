@@ -1,7 +1,7 @@
 /*
  *	JOE options
  *	Copyright
- *		(C) 1992 Joseph H. Allen; 
+ *		(C) 1992 Joseph H. Allen;
  *
  *	This file is part of JOE (Joe's Own Editor)
  */
@@ -35,7 +35,7 @@ void setopt(B *b, const char *name);
  * glopt(name,arg,options,1): set file local option
  */
 
-int glopt(char *s, char *arg, OPTIONS *options, int set);
+int glopt(const char *s, char *arg, OPTIONS *options, int set);
 
 /* Option setting user command */
 int umode(W *w, int k);

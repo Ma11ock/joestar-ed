@@ -5,9 +5,10 @@
 #include <string.h>
 #include <stdint.h>
 
-struct joe_var usermail = { "UserMail", LUA_STRING, NULL, true, NULL, false };
-struct joe_var username = { "UserName", LUA_STRING, NULL, true, NULL, false };
-
+struct joe_var usermail = { "UserMail",   LUA_STRING, false, true,  NULL, false };
+struct joe_var username = { "UserName",   LUA_STRING, false, true,  NULL, false };
+struct joe_var linum    = { "linum_mode", LUA_REAL,   true,  false, NULL, false };
+struct joe_var pg       = { "undo_keep",         LUA_REAL,   true,  true,  NULL, false };
 
 struct joe_var_node
 {
@@ -122,14 +123,14 @@ bool ensure_lua_type(struct joe_var *var, jlua_type ltype)
 }
 
 /* Add a variable to the map */
-void joes_add_var(const char *name, jlua_type type, void *data, bool global)
+void joes_add_var(const char *name, jlua_type type, bool int_data, bool global)
 {
     struct joe_var *newVar = (struct joe_var*)joe_malloc(sizeof(struct joe_var));
 
     *newVar = (struct joe_var)
               { .name = name,
                 .type = type,
-                .data = data,
+                .int_data = int_data,
                 .global = global,
                 .str_value = NULL,
                 .free = true };
@@ -144,6 +145,8 @@ void joes_init_bridge()
 {
     joes_add_var_by_ref(&usermail);
     joes_add_var_by_ref(&username);
+    joes_add_var_by_ref(&linum);
+    joes_add_var_by_ref(&pg);
 }
 
 /* Add variable by reference */
@@ -155,7 +158,7 @@ void joes_add_var_by_ref(struct joe_var *var)
 /* Add a variable to the map */
 void joes_add_var_struct(struct joe_var var)
 {
-    joes_add_var(var.name, var.type, var.data, var.global);
+    joes_add_var(var.name, var.type, var.int_data, var.global);
 }
 
 /* gets string value from variable 'name' */
@@ -193,7 +196,7 @@ void joes_set_val(const char *name, const void *data)
     if(data == NULL)
     {
         tmp->str_value = NULL;
-        tmp->data = NULL;
+        tmp->int_data = false;
         return;
     }
 
@@ -208,25 +211,83 @@ void joes_set_val(const char *name, const void *data)
 
 void joes_set_var_string(const char *name, const char *str)
 {
-    if(name == NULL || str == NULL)
-        return;
+    joes_set_var_string_ref(joes_get_var_by_name(name), str);
+}
 
-    struct joe_var *tmp = joes_get_var_by_name(name);
+void joes_set_var_real(const char *name, double real)
+{
+    joes_set_var_real_ref(joes_get_var_by_name(name), real);
+}
+
+void joes_set_var_bool(const char *name, bool boolean)
+{
+    joes_set_var_bool_ref(joes_get_var_by_name(name), boolean);
+}
+
+void joes_set_var_string_ref(struct joe_var *var, const char *str)
+{
     /*TODO log these errors*/
-    if(tmp == NULL || tmp->type != LUA_STRING)
+    if(var == NULL || var->type != LUA_STRING || str == NULL)
         return;
 
     /* Set data if necessary */
-    if(tmp->data != NULL)
+    if(var->int_data != false)
     {
-        tmp->data = str;
+        glopt(var->name, str, NULL, 1);
     }
 
-    tmp->str_value = NULL;
+    var->str_value = str;
 }
 
-/* setter for reference  */
-void joes_set_val_ref(struct joe_var *var, const void *data)
+void joes_set_var_bool_ref(struct joe_var *var, bool boolean)
 {
+    /*TODO log these errors*/
+    if(var == NULL || var->type != LUA_BOOL)
+        return;
 
+    /* Set data if necessary */
+    if(var->int_data != false)
+    {
+        char str_bool[2] = { '\0' };
+        str_bool[0] = (!boolean) ? '0' : '1';
+        glopt(var->name, str_bool, NULL, 1);
+    }
+
+    var->bool_value = boolean;
+
+}
+
+void joes_set_var_real_ref(struct joe_var *var, double real)
+{
+    /*TODO log these errors*/
+    if(var == NULL || var->type != LUA_REAL)
+        return;
+
+    /* Set data if necessary */
+    if(var->int_data != false)
+    {
+        /* joe glopts only take integers, so no need to keep value as double */
+        fputs(var->name, stderr);
+        char int_string[33];
+        snprintf(int_string, sizeof(int_string), "%d", (int)real);
+        glopt(var->name, int_string, NULL, true);
+        fputs(var->name, stderr);
+
+    }
+
+    var->num_value = real;
+
+}
+
+void joes_var_unset(const char *name)
+{
+    joes_var_unset_ref(joes_get_var_by_name(name));
+}
+
+void joes_var_unset_ref(struct joe_var *var)
+{
+    var->str_value = NULL;
+
+    if(var->int_data != false)
+        glopt(var->name, NULL, NULL, 1);
 }

@@ -19,8 +19,7 @@ struct joe_var
 {
     const char *name;         /* Name of the variable                                         */
     jlua_type   type;         /* Type interpretation of data                                  */
-    void       *data;         /* Pointer to global data. Same as set in glopt (see options.c).
-                                 NULL if maps to no glopt                                     */
+    bool        int_data;     /* True if var represents internal joe data (glopt)             */
     bool        global;       /* True if global variable, false if local (to buffer)          */
     union                     /* Data                                                         */
     {
@@ -35,9 +34,11 @@ struct joe_var
 
 extern struct joe_var usermail;
 extern struct joe_var username;
+extern struct joe_var linum;
+extern struct joe_var pg;
 
 /* Add a variable to the map */
-void joes_add_var(const char *name, jlua_type type, void *data, bool global);
+void joes_add_var(const char *name, jlua_type type, bool int_data, bool global);
 /* Add a variable to the map */
 void joes_add_var_struct(struct joe_var var);
 /* Add variable by reference */
@@ -59,13 +60,16 @@ const char *joes_get_vstring(const char *name);
 double joes_get_vreal(const char *name);
 /* gets bool value from variable 'name'. Returns false if no variable, or if not set  */
 bool joes_get_vbool(const char *name);
-/* setter */
-void joes_set_val(const char *name, const void *data);
-/* setter for reference  */
-void joes_set_val_ref(struct joe_var *var, const void *data);
+/* setters */
+void joes_set_var_string(const char *name, const char *str);
+void joes_set_var_bool(const char *name, bool boolean);
+void joes_set_var_real(const char *name, double real);
 
-#define joes_var_unset(name) joes_set_val(name, NULL)
-
+void joes_set_var_string_ref(struct joe_var *var, const char *str);
+void joes_set_var_bool_ref(struct joe_var *var, bool boolean);
+void joes_set_var_real_ref(struct joe_var *var, double real);
+void joes_var_unset(const char *name);
+void joes_var_unset_ref(struct joe_var *var);
 /* joe_var with default values */
 extern const struct joe_var DEFAULT_JOE_VAR;
 

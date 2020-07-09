@@ -51,7 +51,7 @@ int l_set(lua_State *L)
     return 0;
 }
 
-static const struct luaL_Reg libjoestar [] =
+static const struct luaL_Reg libjoestar[] =
 {
     { "joeset", l_set },
 };
@@ -60,6 +60,8 @@ static struct joe_var *joestar_var_names[] =
 {
     &usermail,
     &username,
+    &linum,
+    &pg
 };
 
 /*****************************************************************************/
@@ -111,10 +113,31 @@ void init_lua()
             case LUA_STRING:
                 if(!lua_isstring(L, -1))
                 {
-                    /*error*/
+                    /*TODO ERROR*/
                 }
                 else
                 {
+                    joes_set_var_string_ref(cur, lua_tostring(L, -1));
+                }
+                break;
+            case LUA_BOOL:
+                if(!lua_isboolean(L, -1))
+                {
+                    /*TODO ERROR*/
+                }
+                else
+                {
+                    joes_set_var_bool_ref(cur, lua_toboolean(L, -1));
+                }
+                break;
+            case LUA_REAL:
+                if(!lua_isnumber(L, -1))
+                {
+                    /*TODO ERROR*/
+                }
+                else
+                {
+                    joes_set_var_real_ref(cur, lua_tonumber(L, -1));
                 }
                 break;
             default:
@@ -127,7 +150,10 @@ void init_lua()
             joes_var_unset(cur->name);
         }
         lua_pop(L, 1);
+
     }
+    fprintf(stderr, "%f\n\n", joestar_var_names[3]->num_value);
+
 }
 
 /* End Lua  */
@@ -158,4 +184,31 @@ void jlua_set_string(const char *var_name, const char *str)
 
     lua_pushstring(L, var_name);
     lua_setglobal(L, str);
+}
+
+void jlua_var_sync(const char *name)
+{
+
+}
+
+
+/* Syncs the joe_var value with the lua VM */
+void jlua_var_sync_ref(struct joe_var *var)
+{
+    switch(var->type)
+    {
+    case LUA_STRING:
+        lua_pushstring(L, var->str_value);
+        break;
+    case LUA_REAL:
+        lua_pushnumber(L, var->num_value);
+        break;
+    case LUA_BOOL:
+        lua_pushboolean(L, var->bool_value);
+        break;
+    default:
+        break;
+    }
+
+    lua_setglobal(L, var->name);
 }

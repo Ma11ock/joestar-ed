@@ -1483,3 +1483,6 @@ Performance:
 
 	getcontext causes huge cpu usage for very large functions
 	[fixed]
+
+Variables:
+    joe internal vars must be ints (mention this in tutorial) 
