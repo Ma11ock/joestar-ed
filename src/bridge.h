@@ -35,7 +35,7 @@ struct joe_var
 extern struct joe_var usermail;
 extern struct joe_var username;
 extern struct joe_var linum;
-extern struct joe_var pg;
+extern struct joe_var undokeep;
 
 /* Add a variable to the map */
 void joes_add_var(const char *name, jlua_type type, bool int_data, bool global);
@@ -51,8 +51,6 @@ void joes_free_vars();
 struct joe_var *joes_get_var_by_name(const char *name);
 /* Ensure the lua type of the wrapper struct is the right type */
 bool ensure_lua_type(struct joe_var *var, jlua_type ltype);
-/* initialize the internal joestar variables */
-void joes_init_bridge();
 /* var getters */
 /* gets string value from variable 'name'. Returns NULL if no variable, or if not set */
 const char *joes_get_vstring(const char *name);

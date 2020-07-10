@@ -1,3 +1,4 @@
+1) get global table, make metamethod that puts value in C, assign metamethod to it
 
 Documentation
 

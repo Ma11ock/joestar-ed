@@ -5,11 +5,6 @@
 #include <string.h>
 #include <stdint.h>
 
-struct joe_var usermail = { "UserMail",   LUA_STRING, false, true,  NULL, false };
-struct joe_var username = { "UserName",   LUA_STRING, false, true,  NULL, false };
-struct joe_var linum    = { "linum_mode", LUA_REAL,   true,  false, NULL, false };
-struct joe_var pg       = { "undo_keep",         LUA_REAL,   true,  true,  NULL, false };
-
 struct joe_var_node
 {
     struct joe_var_node *next;
@@ -139,16 +134,6 @@ void joes_add_var(const char *name, jlua_type type, bool int_data, bool global)
 
 
 
-/* Joestar variables */
-/* (really wish i could hash these at compile time...) */
-void joes_init_bridge()
-{
-    joes_add_var_by_ref(&usermail);
-    joes_add_var_by_ref(&username);
-    joes_add_var_by_ref(&linum);
-    joes_add_var_by_ref(&pg);
-}
-
 /* Add variable by reference */
 void joes_add_var_by_ref(struct joe_var *var)
 {
@@ -267,12 +252,9 @@ void joes_set_var_real_ref(struct joe_var *var, double real)
     if(var->int_data != false)
     {
         /* joe glopts only take integers, so no need to keep value as double */
-        fputs(var->name, stderr);
         char int_string[33];
         snprintf(int_string, sizeof(int_string), "%d", (int)real);
         glopt(var->name, int_string, NULL, true);
-        fputs(var->name, stderr);
-
     }
 
     var->num_value = real;

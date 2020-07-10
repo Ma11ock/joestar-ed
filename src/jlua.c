@@ -29,44 +29,84 @@ void joe_set(const char *name, const void *value, jlua_type ltype)
     struct joe_var newVar;
 }
 
+static bool types_match(jlua_type type, lua_State *l, int index)
+{
+    bool result = false;
+    switch(type)
+    {
+    case LUA_STRING:
+        result = lua_isstring(l, index);
+        break;
+    case LUA_REAL:
+        result = lua_isnumber(l, index);
+        break;
+    case LUA_BOOL:
+        result = lua_isboolean(l, index);
+        break;
+    default:
+        break;
+    }
+
+    return result;
+}
+
 /*****************************************************************************/
 /*                               Joestar Lua Interface                       */
 /*****************************************************************************/
 
-int l_set(lua_State *L)
+static int l_sync_to_joestar(lua_State *l)
 {
-    const char *s = lua_tostring(L, 1);
-    if(lua_isstring(L, 1))
+    struct joe_var *tmp = joes_get_var_by_name(lua_tostring(l, 1));
+
+    if(tmp == NULL)
+        return 0;
+
+    if(lua_isnil(l, 2))
     {
-        if(lua_isstring(L, 2))
-        {
-            fputs(lua_tostring(L, 2), stderr);
-        }
+        joes_var_unset_ref(tmp);
+        return 0;
     }
-    else
+
+    if(!types_match(tmp->type, l, 2))
     {
         /*TODO error*/
+        fprintf(stderr, "Error!: %s and %s do not match\n", tmp->name, lua_tostring(l, 2));
+        return 0;
     }
-    fputs(s, stderr);
+
+    switch(tmp->type)
+    {
+    case LUA_STRING:
+        joes_set_var_string_ref(tmp, lua_tostring(l, 2));
+        break;
+    case LUA_REAL:
+        joes_set_var_real_ref(tmp, lua_tonumber(l, 2));
+        break;
+    case LUA_BOOL:
+        joes_set_var_bool_ref(tmp, lua_toboolean(l, 2));
+        break;
+    default:
+        break;
+    }
     return 0;
 }
 
+/* Joestar interface functions to Lua. */
 static const struct luaL_Reg libjoestar[] =
 {
-    { "joeset", l_set },
+    { "jsync_l", l_sync_to_joestar },
 };
 
+/* Internal Joestar variables. Can be set from Lua. */
 static struct joe_var *joestar_var_names[] =
 {
-    &usermail,
-    &username,
-    &linum,
-    &pg
+    &(struct joe_var){ "linum_mode", LUA_REAL,   true,  false, NULL, false },
+    &(struct joe_var){ "undo_keep",  LUA_REAL,   true,  true,  NULL, false },
+    &(struct joe_var){ "test_path",  LUA_STRING,   false, false,  NULL, false },
 };
 
 /*****************************************************************************/
 /*****************************************************************************/
-
 
 /* Toggle joestar boolean variable */
 void joe_toggle(const char *name)
@@ -83,11 +123,12 @@ void run_lua_script(const char *filepath)
 	return;
 
 lua_fail:
+    (void)filepath;
+    fprintf(stderr, "Lua failed!!!!: %s\n", lua_tostring(L, -1));
     /* TODO failstate */
-    fprintf(stderr, "Not cool.\n");
 }
 
-/* Init Lua */
+/* Init LuaC */
 void init_lua()
 {
     L = luaL_newstate();
@@ -98,62 +139,30 @@ void init_lua()
         lua_pushcfunction(L, tmp.func);
         lua_setglobal(L, tmp.name);
     }
-    /* TODO for testing purposes we will simply load joesinit.lua. */
-    joes_init_bridge(); /* initialize the joestar builtins */
-    run_lua_script("./test.lua");
-    /* Ask lua for values to variables */
+
     for(size_t i = 0; i < sizeof(joestar_var_names) / sizeof(struct joe_var*); i++)
     {
-        struct joe_var *cur = joestar_var_names[i];
-        lua_getglobal(L, cur->name);
-        if(!lua_isnil(L, -1))
-        {
-            switch(cur->type)
-            {
-            case LUA_STRING:
-                if(!lua_isstring(L, -1))
-                {
-                    /*TODO ERROR*/
-                }
-                else
-                {
-                    joes_set_var_string_ref(cur, lua_tostring(L, -1));
-                }
-                break;
-            case LUA_BOOL:
-                if(!lua_isboolean(L, -1))
-                {
-                    /*TODO ERROR*/
-                }
-                else
-                {
-                    joes_set_var_bool_ref(cur, lua_toboolean(L, -1));
-                }
-                break;
-            case LUA_REAL:
-                if(!lua_isnumber(L, -1))
-                {
-                    /*TODO ERROR*/
-                }
-                else
-                {
-                    joes_set_var_real_ref(cur, lua_tonumber(L, -1));
-                }
-                break;
-            default:
-                break;
-            }
-        }
-        /* Variable is nil */
-        else
-        {
-            joes_var_unset(cur->name);
-        }
-        lua_pop(L, 1);
-
+        joes_add_var_by_ref(joestar_var_names[i]);
     }
-    fprintf(stderr, "%f\n\n", joestar_var_names[3]->num_value);
-
+    /*TODO should be reimplemented in C*/
+    const char *set_meta_tab = "local joetst = {}\n\
+setmetatable(_G, { \n\
+__newindex = function (t, n, v) \n\
+    jsync_l(n, v)\n\
+    rawset(joetst, n, v) \n\
+end, \n\
+__index = function(_, n) \n\
+    if not joetst[n] then\n\
+    -- TODO ERROR \n\
+        return nil\n\
+    else\n\
+        return joetst[n]\n\
+    end\n\
+end,\n\
+})";
+    luaL_dostring(L, set_meta_tab);
+    /* TODO for testing purposes we will simply load joesinit.lua. */
+    run_lua_script("./test.lua");
 }
 
 /* End Lua  */
