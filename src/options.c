@@ -7,6 +7,7 @@
  */
 
 #include "types.h"
+#include <limits.h>
 
 #define HEX_RESTORE_UTF8	2
 #define HEX_RESTORE_CRLF	4
@@ -295,6 +296,7 @@ struct glopts {
 	void *set;		/* Address of global option */
 	const char *addr;		/* Local options structure member address */
 	const char *yes;		/* Message if option was turned on, or prompt string */
+
 	const char *no;		/* Message if option was turned off */
 	const char *menu;		/* Menu string */
 	ptrdiff_t ofst;		/* Local options structure member offset */
@@ -460,6 +462,25 @@ void cmd_help(int type)
 
 int isiz = 0;
 HASH *opt_tab;
+
+
+/* get integer value of option */
+int get_option_value(const char *name)
+{
+#ifndef JOES_TEST
+    struct glopts *opt = (struct glopts *)htfind(opt_tab, name);
+    if(opt == NULL)
+    {
+        return INT_MIN;
+    }
+
+    return  *((int*)opt->set);
+
+#else /*TODO*/
+    return undo_keep;
+#endif /*TEST*/
+}
+
 
 static void izopts(void)
 {

@@ -10,6 +10,7 @@
 extern "C"
 {
 #include "../src/bridge.h"
+#include "../src/types.h"
 }
 
 
@@ -71,7 +72,7 @@ TEST(bridge, hash)
 
 TEST(bridge, linkedlist)
 {
-      joe_var *test = new joe_var{"Wow"};
+      joe_var *test = new joe_var{"Wow", LUA_STRING, false, false, NULL, true };
       joes_add_var_by_ref(test);
       joe_var *v = joes_get_var_by_name("Wow");
 
@@ -98,7 +99,7 @@ TEST(bridge, linkedlistMultiple)
 
     for(const auto &s : strings)
     {
-        joes_add_var(s.c_str(), LUA_STRING, NULL, true, NULL);
+        joes_add_var(s.c_str(), LUA_STRING, false, true);
     }
 
     for(const auto &s :  strings)
@@ -109,3 +110,58 @@ TEST(bridge, linkedlistMultiple)
 
     joes_free_vars();
 }
+
+constexpr int firstTestVal = 54;
+
+TEST(options, getOptionSet)
+{
+    char bufr[33];
+    snprintf(bufr, sizeof(bufr), "%d", firstTestVal);
+    glopt("undo_keep", bufr, NULL, 1);
+
+    ASSERT_EQ(get_option_value("undo_keep"), firstTestVal);
+}
+
+constexpr int secondTestVal = 400;
+
+
+TEST(options, getOptionSet2)
+{
+    char bufr[33];
+    snprintf(bufr, sizeof(bufr), "%d", secondTestVal);
+    glopt("undo_keep", bufr, NULL, 1);
+
+    ASSERT_EQ(get_option_value("undo_keep"), firstTestVal);
+}
+
+constexpr double smallVar = 10.0;
+constexpr double bigVar = 400.0;
+
+/*Make sure that joestar and joe variables are in sync*/
+TEST(bridge, setVarsSync)
+{
+    joes_add_var_struct({"undo_keep", LUA_REAL, true, true, NULL, true});
+    joes_set_var_real("undo_keep", smallVar);
+    ASSERT_EQ(get_option_value("undo_keep"), joes_get_var_by_name("undo_keep")->num_value);
+}
+
+/*make sure that the value actually changed*/
+TEST(bridge, setVarsSet)
+{
+    ASSERT_EQ(get_option_value("undo_keep"), smallVar);
+}
+
+/* bigVar is out of undo_keep's range, so the value should still be small var */
+/* make sure they're still in sync*/
+TEST(bridge, setVarsShouldNotChangeSync)
+{
+    joes_set_var_real("undo_keep", bigVar);
+    ASSERT_EQ(get_option_value("undo_keep"), joes_get_var_by_name("undo_keep")->num_value);
+}
+
+/*make sure the variable did not change value*/
+TEST(bridge, setVarsShouldNotChange)
+{
+    ASSERT_EQ(get_option_value("undo_keep"), smallVar);
+}
+

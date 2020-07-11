@@ -35,3 +35,4 @@ if (CMAKE_C_COMPILER_ID MATCHES "Clang")
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -D_DEFAULT_SOURCE -D_GNU_SOURCE")
 endif()
 
+add_compile_definitions(JOES_TEST=1)

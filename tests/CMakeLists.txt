@@ -14,7 +14,6 @@ set(BINARY ${CMAKE_PROJECT_NAME}_test)
 
 project(${BINARY})
 
-add_compile_definitions(JOES_TEST=1)
 
 add_executable(
     ${BINARY}
@@ -48,4 +47,5 @@ target_compile_options(${BINARY} PRIVATE
           /W4 /WX>)
 endif()
 
+add_compile_definitions(JOES_TEST=1)
         

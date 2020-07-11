@@ -55,3 +55,6 @@ extern OPTIONS *options_list;
 void cmd_help(int type);
 
 char **find_configs(char **, const char *, const char *, const char *);
+
+/* get integer value of option */
+int get_option_value(const char *name);

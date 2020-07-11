@@ -4,6 +4,7 @@
 
 #include <string.h>
 #include <stdint.h>
+#include <math.h>
 
 struct joe_var_node
 {
@@ -216,7 +217,7 @@ void joes_set_var_string_ref(struct joe_var *var, const char *str)
         return;
 
     /* Set data if necessary */
-    if(var->int_data != false)
+    if(var->int_data)
     {
         glopt(var->name, str, NULL, 1);
     }
@@ -231,7 +232,7 @@ void joes_set_var_bool_ref(struct joe_var *var, bool boolean)
         return;
 
     /* Set data if necessary */
-    if(var->int_data != false)
+    if(var->int_data)
     {
         char str_bool[2] = { '\0' };
         str_bool[0] = (!boolean) ? '0' : '1';
@@ -249,16 +250,18 @@ void joes_set_var_real_ref(struct joe_var *var, double real)
         return;
 
     /* Set data if necessary */
-    if(var->int_data != false)
+    if(var->int_data)
     {
+        double tmp = var->num_value;
         /* joe glopts only take integers, so no need to keep value as double */
         char int_string[33];
         snprintf(int_string, sizeof(int_string), "%d", (int)real);
         glopt(var->name, int_string, NULL, true);
+        /* Check if actually set (number could be OOB) */
+        real = floor((get_option_value(var->name) == real) ? real : tmp);
     }
 
     var->num_value = real;
-
 }
 
 void joes_var_unset(const char *name)
@@ -270,6 +273,6 @@ void joes_var_unset_ref(struct joe_var *var)
 {
     var->str_value = NULL;
 
-    if(var->int_data != false)
+    if(var->int_data)
         glopt(var->name, NULL, NULL, 1);
 }

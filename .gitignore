@@ -199,3 +199,6 @@ joe/stamp-h1
 src/Makefile.in
 
 **/out.txt
+
+src/*.lua
+src/out

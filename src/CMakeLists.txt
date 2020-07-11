@@ -129,6 +129,9 @@ add_executable(
     main.c
 )
 
+add_compile_definitions(JOES_TEST=1)
+
+
 add_library(${BINARY}_lib STATIC ${SRC_SOURCES})
 
 

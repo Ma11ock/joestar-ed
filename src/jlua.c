@@ -91,10 +91,17 @@ static int l_sync_to_joestar(lua_State *l)
     return 0;
 }
 
+static int testf(lua_State *l)
+{
+    fputs("It has been called.\n", stderr);
+    return 0;
+}
+
 /* Joestar interface functions to Lua. */
 static const struct luaL_Reg libjoestar[] =
 {
     { "jsync_l", l_sync_to_joestar },
+    { "testf" , testf }
 };
 
 /* Internal Joestar variables. Can be set from Lua. */
@@ -102,7 +109,7 @@ static struct joe_var *joestar_var_names[] =
 {
     &(struct joe_var){ "linum_mode", LUA_REAL,   true,  false, NULL, false },
     &(struct joe_var){ "undo_keep",  LUA_REAL,   true,  true,  NULL, false },
-    &(struct joe_var){ "test_path",  LUA_STRING,   false, false,  NULL, false },
+    &(struct joe_var){ "test_path",  LUA_STRING, false, false, NULL, false },
 };
 
 /*****************************************************************************/
@@ -140,29 +147,16 @@ void init_lua()
         lua_setglobal(L, tmp.name);
     }
 
+    /*Register variables */
     for(size_t i = 0; i < sizeof(joestar_var_names) / sizeof(struct joe_var*); i++)
     {
         joes_add_var_by_ref(joestar_var_names[i]);
     }
-    /*TODO should be reimplemented in C*/
-    const char *set_meta_tab = "local joetst = {}\n\
-setmetatable(_G, { \n\
-__newindex = function (t, n, v) \n\
-    jsync_l(n, v)\n\
-    rawset(joetst, n, v) \n\
-end, \n\
-__index = function(_, n) \n\
-    if not joetst[n] then\n\
-    -- TODO ERROR \n\
-        return nil\n\
-    else\n\
-        return joetst[n]\n\
-    end\n\
-end,\n\
-})";
-    luaL_dostring(L, set_meta_tab);
+
     /* TODO for testing purposes we will simply load joesinit.lua. */
+    run_lua_script("./init.lua");
     run_lua_script("./test.lua");
+
 }
 
 /* End Lua  */
