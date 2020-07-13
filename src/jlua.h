@@ -38,4 +38,20 @@ void jlua_set_string(const char *var_name, const char *str);
 void jlua_var_sync(const char *name);
 void jlua_var_sync_ref(struct joe_var *var);
 
+typedef struct window W;
+
+/*Evaluate an entire buffer in lua*/
+int jlua_eval_buffer(W *w, int);
+/*Evaluate the block in lua*/
+int jlua_eval_block(W *w, int);
+/*Evaluate the current line in lua*/
+int jlua_eval_line(W *w, int);
+
+/* get number variable from lua vm. error will be set to true on error, and it will return -INF */
+double jlua_get_global_real(const char *name, bool *error);
+
+void jlua_set_var_real(const char *name, double real);
+void jlua_set_var_bool(const char *name, bool b);
+void jlua_set_var_str(const char *name, const char *str);
+
 #endif /* JOES_LUA_H */

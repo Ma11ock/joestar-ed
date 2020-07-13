@@ -2,6 +2,7 @@
 extern "C"
 {
 #include "../src/types.h"
+#include "../src/jlua.h"
 }
 
 TEST(myTest, mtest)
@@ -14,6 +15,9 @@ TEST(myTest, mtest)
 int main(int argc, char **argv, char **env)
 {
     (void)env;
+    init_lua();
     ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    int result = RUN_ALL_TESTS();
+    free_lua();
+    return result;
 }

@@ -61,11 +61,14 @@ bool joes_get_vbool(const char *name);
 /* setters */
 void joes_set_var_string(const char *name, const char *str);
 void joes_set_var_bool(const char *name, bool boolean);
-void joes_set_var_real(const char *name, double real);
+bool joes_set_var_real(const char *name, double real);
 
 void joes_set_var_string_ref(struct joe_var *var, const char *str);
 void joes_set_var_bool_ref(struct joe_var *var, bool boolean);
-void joes_set_var_real_ref(struct joe_var *var, double real);
+/* joe internal integer variables can have bounds or other limits on what they can be,
+   so not all number values are valid. joes_set_var_real_ref returns true if the value is not valid,
+   and the lua VM needs to be synced. */
+bool joes_set_var_real_ref(struct joe_var *var, double real);
 void joes_var_unset(const char *name);
 void joes_var_unset_ref(struct joe_var *var);
 /* joe_var with default values */

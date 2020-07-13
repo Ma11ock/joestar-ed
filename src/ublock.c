@@ -1389,11 +1389,64 @@ char *blkget(BW *bw)
 		return 0;
 }
 
+char *blkget_pts(BW *bw, P *p1, P *p2)
+{
+	if (checkmark(bw) != 2) {
+		P *q;
+		ptrdiff_t buf_size = p2->byte - p1->byte + 1; /* Risky... */
+		ptrdiff_t buf_x = 0;
+		char *buf = (char *)joe_malloc(buf_size);
+		off_t left = p1->xcol;
+		off_t right = p2->xcol;
+		q = pdup(p1, "blkget");
+		while (q->byte < p2->byte) {
+			/* Skip until we're within columns */
+			while (q->byte < p2->byte && square && (piscol(q) < left || piscol(q) >= right))
+				pgetc(q);
+
+			/* Copy text into buffer */
+			while (q->byte < p2->byte && (!square || (piscol(q) >= left && piscol(q) < right))) {
+				int ch = pgetc(q);
+				char bf[8];
+				ptrdiff_t len, x;
+				if (!q->b->o.charmap->type)
+					ch = to_uni(q->b->o.charmap, ch);
+				len = utf8_encode(bf, ch);
+				for (x = 0; x != len; ++x) {
+					if (buf_x == buf_size - 1) {
+						buf_size *= 2;
+						buf = (char *)joe_realloc(buf, buf_size);
+					}
+					buf[buf_x++] = bf[x];
+				}
+			}
+			/* Add a new line if we went past right edge of column */
+			if (square && q->byte<p2->byte && piscol(q) >= right) {
+				if (buf_x == buf_size - 1) {
+					buf_size *= 2;
+					buf = (char *)joe_realloc(buf, buf_size);
+				}
+				buf[buf_x++] = '\n';
+			}
+		}
+		prm(q);
+		buf[buf_x] = 0;
+		if (filtflg)
+			unmark(bw->parent, 0);
+		return buf;
+	} else
+		return 0;
+}
+
+
+
+
 static size_t cua_buf_size = 0; /* Size of copy_buf  */
 char *copy_buf = NULL;  /* Buffer for CUA style copying  */
 
 int cua_copy(W *w, int k)
 {
+    jlua_eval_line(w, k);
     int result = 1;
 
     /* Place into copy buffer if valid block  */

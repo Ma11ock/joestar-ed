@@ -164,7 +164,7 @@ double joes_get_vreal(const char *name)
 }
 
 /* gets bool value from variable 'name' */
- bool joes_get_vbool(const char *name)
+bool joes_get_vbool(const char *name)
 {
     struct joe_var *tmp = joes_get_var_by_name(name);
 
@@ -200,9 +200,9 @@ void joes_set_var_string(const char *name, const char *str)
     joes_set_var_string_ref(joes_get_var_by_name(name), str);
 }
 
-void joes_set_var_real(const char *name, double real)
+bool joes_set_var_real(const char *name, double real)
 {
-    joes_set_var_real_ref(joes_get_var_by_name(name), real);
+    return joes_set_var_real_ref(joes_get_var_by_name(name), real);
 }
 
 void joes_set_var_bool(const char *name, bool boolean)
@@ -243,11 +243,13 @@ void joes_set_var_bool_ref(struct joe_var *var, bool boolean)
 
 }
 
-void joes_set_var_real_ref(struct joe_var *var, double real)
+bool joes_set_var_real_ref(struct joe_var *var, double real)
 {
     /*TODO log these errors*/
     if(var == NULL || var->type != LUA_REAL)
         return;
+
+    bool should_sync = false;
 
     /* Set data if necessary */
     if(var->int_data)
@@ -258,10 +260,13 @@ void joes_set_var_real_ref(struct joe_var *var, double real)
         snprintf(int_string, sizeof(int_string), "%d", (int)real);
         glopt(var->name, int_string, NULL, true);
         /* Check if actually set (number could be OOB) */
-        real = floor((get_option_value(var->name) == real) ? real : tmp);
+        int option_value = get_option_value(var->name);
+        real = floor((option_value == (int)real) ? real : tmp);
+        should_sync = (real != tmp) ? true : false;
     }
 
     var->num_value = real;
+    return should_sync;
 }
 
 void joes_var_unset(const char *name)

@@ -142,6 +142,7 @@ TEST(bridge, setVarsSync)
 {
     joes_add_var_struct({"undo_keep", LUA_REAL, true, true, NULL, true});
     joes_set_var_real("undo_keep", smallVar);
+    jlua_var_sync("undo_keep");
     ASSERT_EQ(get_option_value("undo_keep"), joes_get_var_by_name("undo_keep")->num_value);
 }
 
@@ -156,6 +157,7 @@ TEST(bridge, setVarsSet)
 TEST(bridge, setVarsShouldNotChangeSync)
 {
     joes_set_var_real("undo_keep", bigVar);
+    jlua_var_sync("undo_keep");
     ASSERT_EQ(get_option_value("undo_keep"), joes_get_var_by_name("undo_keep")->num_value);
 }
 
@@ -165,3 +167,11 @@ TEST(bridge, setVarsShouldNotChange)
     ASSERT_EQ(get_option_value("undo_keep"), smallVar);
 }
 
+TEST(bridge, setVarsSyncLuaVM)
+{
+    bool error;
+    double d = jlua_get_global_real("undo_keep", &error);
+
+    ASSERT_EQ(error, false);
+    ASSERT_EQ(get_option_value("undo_keep"), d);
+}

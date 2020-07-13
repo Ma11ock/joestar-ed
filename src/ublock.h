@@ -47,6 +47,7 @@ extern int nstack; /* No. block markers pushed on stack */
 int blksum(BW *bw, double *,double *);
 int blklr(BW *bw, double *,double *, double *, double *, double *, int, int);
 char *blkget(BW *bw);
+char *blkget_pts(BW *bw, P *p1, P *p2);
 int cua_copy(W *w, int k); /* Copy the region into copy_buf  */
 int cua_paste(W *w, int k); /* Paste what is in the copy buffer  */
 int cua_cut(W *w, int k); /* Copy the region into copy_buf and kill the region */

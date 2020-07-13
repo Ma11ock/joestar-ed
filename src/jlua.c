@@ -23,12 +23,6 @@ double get_global_float(const char *name)
     return result;
 }
 
-/* Set joestar variable value */
-void joe_set(const char *name, const void *value, jlua_type ltype)
-{
-    struct joe_var newVar;
-}
-
 static bool types_match(jlua_type type, lua_State *l, int index)
 {
     bool result = false;
@@ -80,7 +74,10 @@ static int l_sync_to_joestar(lua_State *l)
         joes_set_var_string_ref(tmp, lua_tostring(l, 2));
         break;
     case LUA_REAL:
-        joes_set_var_real_ref(tmp, lua_tonumber(l, 2));
+        if(joes_set_var_real_ref(tmp, lua_tonumber(l, 2)))
+        {
+            jlua_var_sync_ref(tmp);
+        }
         break;
     case LUA_BOOL:
         joes_set_var_bool_ref(tmp, lua_toboolean(l, 2));
@@ -116,9 +113,15 @@ static struct joe_var *joestar_var_names[] =
 /*****************************************************************************/
 
 /* Toggle joestar boolean variable */
-void joe_toggle(const char *name)
+bool run_lua_from_string(const char *name)
 {
+    if(luaL_dostring(L, name) != LUA_OK)
+    {
+        fprintf(stderr, "Lua failed: %s\n", lua_tostring(L, -1));
+        return false;
+    }
 
+    return true;
 }
 
 void run_lua_script(const char *filepath)
@@ -131,7 +134,7 @@ void run_lua_script(const char *filepath)
 
 lua_fail:
     (void)filepath;
-    fprintf(stderr, "Lua failed!!!!: %s\n", lua_tostring(L, -1));
+    fprintf(stderr, "Lua failed: %s\n", lua_tostring(L, -1));
     /* TODO failstate */
 }
 
@@ -155,8 +158,7 @@ void init_lua()
 
     /* TODO for testing purposes we will simply load joesinit.lua. */
     run_lua_script("./init.lua");
-    run_lua_script("./test.lua");
-
+//    run_lua_script("./test.lua");
 }
 
 /* End Lua  */
@@ -168,12 +170,12 @@ void free_lua()
 }
 
 /* Check the Lua state to make sure there are no errors. */
-static bool check_lua(lua_State *ls, int r)
+static bool check_lua(int r)
 {
     bool result = true;
     if(r != LUA_OK)
     {
-        //= lua_tostring(L, -1); TODO handle error
+        fprintf(stderr, "Error in lua: %s\n", lua_tostring(L, -1)); // TODO handle error
         result = false;
     }
 
@@ -189,29 +191,146 @@ void jlua_set_string(const char *var_name, const char *str)
     lua_setglobal(L, str);
 }
 
+/*Sync the value of the joe_var to its lua counterpart*/
 void jlua_var_sync(const char *name)
 {
-
+    jlua_var_sync_ref(joes_get_var_by_name(name));
 }
-
 
 /* Syncs the joe_var value with the lua VM */
 void jlua_var_sync_ref(struct joe_var *var)
 {
+
     switch(var->type)
     {
     case LUA_STRING:
-        lua_pushstring(L, var->str_value);
+        jlua_set_var_str(var->name, var->str_value);
         break;
     case LUA_REAL:
-        lua_pushnumber(L, var->num_value);
+        jlua_set_var_real(var->name, var->num_value);
         break;
     case LUA_BOOL:
-        lua_pushboolean(L, var->bool_value);
+        jlua_set_var_bool(var->name, var->bool_value);
         break;
     default:
+//        lua_pushnil(L);
         break;
     }
-
-    lua_setglobal(L, var->name);
 }
+
+
+int jlua_eval_block(W *w, int k)
+{
+    (void)k;
+    BW *bw;
+    WIND_BW(bw, w);
+
+    char *tmp = blkget(bw);
+    bool result = run_lua_from_string(tmp);
+    joe_free(tmp);
+
+    return (int)result;
+}
+
+int jlua_eval_buffer(W *w, int k)
+{
+    (void)k;
+    BW *bw;
+    WIND_BW(bw, w);
+
+    char *tmp = blkget_pts(bw, bw->b->bof, bw->b->eof);
+    bool result = run_lua_from_string(tmp);
+    joe_free(tmp);
+
+    return (int)result;
+}
+
+int jlua_eval_line(W *w, int k)
+{
+    (void)k;
+    BW *bw;
+    WIND_BW(bw, w);
+    const char *iden = "jlua_eval_line";
+
+    P *tmp_bol = pdup(bw->cursor, iden);
+    P *tmp_eol = pdup(bw->cursor, iden);
+
+    p_goto_bol(tmp_bol);
+    p_goto_eol(tmp_eol);
+
+    char *tmp = blkget_pts(bw, tmp_bol, tmp_eol);
+    bool result = run_lua_from_string(tmp);
+
+    joe_free(tmp);
+    prm(tmp_bol);
+    prm(tmp_eol);
+
+    return (int)result;
+}
+
+/* get number variable from lua vm. error will be set to true on error, and it will return -INF */
+double jlua_get_global_real(const char *name, bool *error)
+{
+    double result = -INFINITY;
+    *error = false;
+
+    lua_getglobal(L, "joestar_get_variable");
+    lua_pushstring(L, name);
+    if(check_lua(lua_pcall(L, 1, 1, 0)))
+    {
+        if(!lua_isnumber(L, -1))
+        {
+            *error = true;
+        }
+        else
+        {
+            result = lua_tonumber(L, -1);
+        }
+
+    }
+    else
+    {
+        *error = true;
+    }
+
+    return result;
+}
+
+/* Set the lua variable name to the value of real */
+void jlua_set_var_real(const char *name, double real)
+{
+    lua_getglobal(L, "joestar_variable_sync");
+    lua_pushstring(L, name);
+    lua_pushnumber(L, real);
+    if(!check_lua(lua_pcall(L, 2, 0, 0)))
+    {
+        /*TODO*/
+    }
+}
+
+/* Set the lua variable name to the value of b */
+void jlua_set_var_bool(const char *name, bool b)
+{
+    lua_getglobal(L, "joestar_variable_sync");
+    lua_pushstring(L, name);
+    lua_pushboolean(L, b);
+    if(!check_lua(lua_pcall(L, 2, 0, 0)))
+    {
+        /*TODO*/
+    }
+
+}
+
+/* Set the lua variable name to the value of str */
+void jlua_set_var_str(const char *name, const char *str)
+{
+    lua_getglobal(L, "joestar_variable_sync");
+    lua_pushstring(L, name);
+    lua_pushstring(L, str);
+    if(!check_lua(lua_pcall(L, 2, 0, 0)))
+    {
+        /*TODO*/
+    }
+
+}
+
