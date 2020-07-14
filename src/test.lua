@@ -1,0 +1,2 @@
+joestar = require 'init'
+

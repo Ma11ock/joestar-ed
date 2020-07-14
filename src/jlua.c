@@ -18,6 +18,9 @@ static bool types_match(jlua_type type, lua_State *l, int index)
     bool result = false;
     switch(type)
     {
+    case LUA_TABLE:
+        result = lua_istable(l, index);
+        break;
     case LUA_STRING:
         result = lua_isstring(l, index);
         break;
@@ -151,8 +154,8 @@ void init_lua()
     }
 
     /* TODO for testing purposes we will simply load joesinit.lua. */
-    run_lua_script("./init.lua");
-    run_lua_from_string("joestar = require 'joestar'\n");
+    run_lua_script("init.lua");
+    run_lua_script("test.lua");
 }
 
 /* End Lua  */
@@ -269,11 +272,14 @@ double jlua_get_global_real(const char *name, bool *error)
     double result = -INFINITY;
     *error = false;
 
-    jlua_get_global("get_variable", LUA_FUNCTION);
+    jlua_get_global("joestar", LUA_TABLE);
+    lua_pushstring(L, "get_variable");
+    lua_gettable(L, -2);
 
     if(!lua_isfunction(L, -1))
     {
         /*TODO error*/
+        exit(2);
     }
 
     lua_pushstring(L, name);
@@ -294,7 +300,7 @@ double jlua_get_global_real(const char *name, bool *error)
         *error = true;
     }
 
-    lua_pop(L, 1); /* pop the result and joe table */
+    lua_pop(L, 2); /* pop the result and joe table */
 
     return result;
 }
@@ -302,8 +308,10 @@ double jlua_get_global_real(const char *name, bool *error)
 /* Set the lua variable name to the value of real */
 void jlua_set_var_real(const char *name, double real)
 {
-    jlua_get_global("variable_sync", LUA_FUNCTION);
+    jlua_get_global("joestar", LUA_TABLE);
 
+    lua_pushstring(L, "variable_sync");
+    lua_gettable(L, -2);
     if(!lua_isfunction(L, -1))
     {
         /*TODO error*/
@@ -316,6 +324,7 @@ void jlua_set_var_real(const char *name, double real)
         /*TODO*/
     }
 
+    lua_pop(L, 1); /* Pop the table off the stack */
 }
 
 /* Set the lua variable name to the value of b */
@@ -357,9 +366,7 @@ void jlua_set_var_str(const char *name, const char *str)
 /* gets a global and puts it on the lua stack, ensuring it is of type 'type' */
 void jlua_get_global(const char *name, jlua_type type)
 {
-    fprintf(stderr, "Getting the global: %s\n", name);
     lua_getglobal(L, name);
-    fprintf(stderr, "With the value: %s\n", lua_tostring(L, -1));
 
     if(!types_match(type, L, -1))
     {
