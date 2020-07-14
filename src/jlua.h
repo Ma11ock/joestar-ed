@@ -50,6 +50,9 @@ int jlua_eval_line(W *w, int);
 /* get number variable from lua vm. error will be set to true on error, and it will return -INF */
 double jlua_get_global_real(const char *name, bool *error);
 
+/* gets a global and puts it on the lua stack, ensuring it is of type 'type' */
+void jlua_get_global(const char *name, jlua_type tpye);
+
 void jlua_set_var_real(const char *name, double real);
 void jlua_set_var_bool(const char *name, bool b);
 void jlua_set_var_str(const char *name, const char *str);

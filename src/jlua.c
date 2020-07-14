@@ -13,16 +13,6 @@
 
 static lua_State *L = NULL;
 
-
-double get_global_float(const char *name)
-{
-    double result;
-    lua_getglobal(L, name);
-    result = lua_tonumber(L, 1);
-    lua_pop(L, 1);
-    return result;
-}
-
 static bool types_match(jlua_type type, lua_State *l, int index)
 {
     bool result = false;
@@ -37,7 +27,10 @@ static bool types_match(jlua_type type, lua_State *l, int index)
     case LUA_BOOL:
         result = lua_isboolean(l, index);
         break;
-    default:
+    case LUA_FUNCTION:
+        result = lua_isfunction(l, index);
+        break;
+    default: /*Nil*/
         break;
     }
 
@@ -118,6 +111,7 @@ bool run_lua_from_string(const char *name)
     if(luaL_dostring(L, name) != LUA_OK)
     {
         fprintf(stderr, "Lua failed: %s\n", lua_tostring(L, -1));
+        lua_pop(L, 1); /* pop error message */
         return false;
     }
 
@@ -133,8 +127,8 @@ void run_lua_script(const char *filepath)
 	return;
 
 lua_fail:
-    (void)filepath;
     fprintf(stderr, "Lua failed: %s\n", lua_tostring(L, -1));
+    lua_pop(L, 1); /* pop error message */
     /* TODO failstate */
 }
 
@@ -158,7 +152,7 @@ void init_lua()
 
     /* TODO for testing purposes we will simply load joesinit.lua. */
     run_lua_script("./init.lua");
-//    run_lua_script("./test.lua");
+    run_lua_from_string("joestar = require 'joestar'\n");
 }
 
 /* End Lua  */
@@ -176,6 +170,7 @@ static bool check_lua(int r)
     if(r != LUA_OK)
     {
         fprintf(stderr, "Error in lua: %s\n", lua_tostring(L, -1)); // TODO handle error
+        lua_pop(L, 1); /* pop error message */
         result = false;
     }
 
@@ -274,7 +269,13 @@ double jlua_get_global_real(const char *name, bool *error)
     double result = -INFINITY;
     *error = false;
 
-    lua_getglobal(L, "joestar_get_variable");
+    jlua_get_global("get_variable", LUA_FUNCTION);
+
+    if(!lua_isfunction(L, -1))
+    {
+        /*TODO error*/
+    }
+
     lua_pushstring(L, name);
     if(check_lua(lua_pcall(L, 1, 1, 0)))
     {
@@ -293,44 +294,76 @@ double jlua_get_global_real(const char *name, bool *error)
         *error = true;
     }
 
+    lua_pop(L, 1); /* pop the result and joe table */
+
     return result;
 }
 
 /* Set the lua variable name to the value of real */
 void jlua_set_var_real(const char *name, double real)
 {
-    lua_getglobal(L, "joestar_variable_sync");
+    jlua_get_global("variable_sync", LUA_FUNCTION);
+
+    if(!lua_isfunction(L, -1))
+    {
+        /*TODO error*/
+    }
+
     lua_pushstring(L, name);
     lua_pushnumber(L, real);
     if(!check_lua(lua_pcall(L, 2, 0, 0)))
     {
         /*TODO*/
     }
+
 }
 
 /* Set the lua variable name to the value of b */
 void jlua_set_var_bool(const char *name, bool b)
 {
-    lua_getglobal(L, "joestar_variable_sync");
+    jlua_get_global("variable_sync", LUA_FUNCTION);
+
+    if(!lua_isfunction(L, -1))
+    {
+        /*TODO error*/
+    }
+
     lua_pushstring(L, name);
     lua_pushboolean(L, b);
     if(!check_lua(lua_pcall(L, 2, 0, 0)))
     {
         /*TODO*/
     }
-
 }
 
 /* Set the lua variable name to the value of str */
 void jlua_set_var_str(const char *name, const char *str)
 {
-    lua_getglobal(L, "joestar_variable_sync");
+    jlua_get_global("variable_sync", LUA_FUNCTION);
+
+    if(!lua_isfunction(L, -1))
+    {
+        /*TODO error*/
+    }
+
     lua_pushstring(L, name);
     lua_pushstring(L, str);
     if(!check_lua(lua_pcall(L, 2, 0, 0)))
     {
         /*TODO*/
     }
-
 }
 
+/* gets a global and puts it on the lua stack, ensuring it is of type 'type' */
+void jlua_get_global(const char *name, jlua_type type)
+{
+    fprintf(stderr, "Getting the global: %s\n", name);
+    lua_getglobal(L, name);
+    fprintf(stderr, "With the value: %s\n", lua_tostring(L, -1));
+
+    if(!types_match(type, L, -1))
+    {
+        exit(1);
+        /* TODO big error */
+    }
+}
