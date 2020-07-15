@@ -72,7 +72,7 @@ TEST(bridge, hash)
 
 TEST(bridge, linkedlist)
 {
-      joe_var *test = new joe_var{"Wow", LUA_STRING, false, false, NULL, true };
+      joe_var *test = new joe_var{"Wow", LUA_STRING, false, false, NULL, true, NULL };
       joes_add_var_by_ref(test);
       joe_var *v = joes_get_var_by_name("Wow");
 
@@ -99,7 +99,7 @@ TEST(bridge, linkedlistMultiple)
 
     for(const auto &s : strings)
     {
-        joes_add_var(s.c_str(), LUA_STRING, false, true);
+        joes_add_var(s.c_str(), LUA_STRING, false, true, "");
     }
 
     for(const auto &s :  strings)
@@ -140,7 +140,7 @@ constexpr double bigVar = 400.0;
 /*Make sure that joestar and joe variables are in sync*/
 TEST(bridge, setVarsSync)
 {
-    joes_add_var_struct({"undo_keep", LUA_REAL, true, true, NULL, true});
+    joes_add_var_struct({"undo_keep", LUA_REAL, true, true, NULL, true, strdup("Lol") });
     joes_set_var_real("undo_keep", smallVar);
     jlua_var_sync("undo_keep");
     ASSERT_EQ(get_option_value("undo_keep"), joes_get_var_by_name("undo_keep")->num_value);

@@ -30,6 +30,7 @@ struct joe_var
 
     bool free;                /* true if ownership (the responsibility to free()) is had by
                                  bridge.c                                                     */
+    char *descr;              /* description string */
 };
 
 extern struct joe_var usermail;
@@ -38,7 +39,7 @@ extern struct joe_var linum;
 extern struct joe_var undokeep;
 
 /* Add a variable to the map */
-void joes_add_var(const char *name, jlua_type type, bool int_data, bool global);
+void joes_add_var(const char *name, jlua_type type, bool int_data, bool global, const char *descr);
 /* Add a variable to the map */
 void joes_add_var_struct(struct joe_var var);
 /* Add variable by reference */

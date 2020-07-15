@@ -14,7 +14,7 @@ struct joe_var_node
 
 static struct joe_var_node *var_hash_map[HASH_MAX];
 
-const struct joe_var DEFAULT_JOE_VAR = { NULL, LUA_NIL, NULL, false, NULL };
+const struct joe_var DEFAULT_JOE_VAR = { NULL, LUA_NIL, NULL, false, NULL, false, NULL };
 
 struct joe_var_node *make_node(struct joe_var *var)
 {
@@ -77,7 +77,11 @@ void joes_free_vars()
             /* Traverse and free the list */
             tmp = head->next;
             if(head->var->free)
+            {
+                if(head->var->descr)
+                    free(head->var->descr);
                 joe_free(head->var);
+            }
             joe_free(head);
             head = tmp;
             var_hash_map[i] = NULL;
@@ -119,7 +123,7 @@ bool ensure_lua_type(struct joe_var *var, jlua_type ltype)
 }
 
 /* Add a variable to the map */
-void joes_add_var(const char *name, jlua_type type, bool int_data, bool global)
+void joes_add_var(const char *name, jlua_type type, bool int_data, bool global, const char *descr)
 {
     struct joe_var *newVar = (struct joe_var*)joe_malloc(sizeof(struct joe_var));
 
@@ -129,7 +133,8 @@ void joes_add_var(const char *name, jlua_type type, bool int_data, bool global)
                 .int_data = int_data,
                 .global = global,
                 .str_value = NULL,
-                .free = true };
+                .free = true,
+                .descr = strdup((descr) ? descr : "") };
     add_var_to_list(newVar, joes_var_hash(name));
 }
 
@@ -144,7 +149,7 @@ void joes_add_var_by_ref(struct joe_var *var)
 /* Add a variable to the map */
 void joes_add_var_struct(struct joe_var var)
 {
-    joes_add_var(var.name, var.type, var.int_data, var.global);
+    joes_add_var(var.name, var.type, var.int_data, var.global, var.descr);
 }
 
 /* gets string value from variable 'name' */
@@ -247,7 +252,7 @@ bool joes_set_var_real_ref(struct joe_var *var, double real)
 {
     /*TODO log these errors*/
     if(var == NULL || var->type != LUA_REAL)
-        return;
+        return false;
 
     bool should_sync = false;
 

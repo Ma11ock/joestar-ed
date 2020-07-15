@@ -14,7 +14,7 @@ local joestar_globals = {}
     end,
 })
 
-local joestar = {}
+joestar = {}
 
 function get_variable(name)
     return joestar_globals[name]

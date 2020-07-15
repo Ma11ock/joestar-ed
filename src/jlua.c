@@ -100,9 +100,9 @@ static const struct luaL_Reg libjoestar[] =
 /* Internal Joestar variables. Can be set from Lua. */
 static struct joe_var *joestar_var_names[] =
 {
-    &(struct joe_var){ "linum_mode", LUA_REAL,   true,  false, NULL, false },
-    &(struct joe_var){ "undo_keep",  LUA_REAL,   true,  true,  NULL, false },
-    &(struct joe_var){ "test_path",  LUA_STRING, false, false, NULL, false },
+    &(struct joe_var){ "linum_mode", LUA_REAL,   true,  false, NULL, false, _("Way to display line numbers.") },
+    &(struct joe_var){ "undo_keep",  LUA_REAL,   true,  true,  NULL, false, _("How many undos to keep in memory") },
+    &(struct joe_var){ "eval_path",  LUA_STRING, false, false, NULL, false, _("Path to lua scripts to evaluate") },
 };
 
 /*****************************************************************************/
