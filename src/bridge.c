@@ -134,7 +134,8 @@ void joes_add_var(const char *name, jlua_type type, bool int_data, bool global, 
                 .global = global,
                 .str_value = NULL,
                 .free = true,
-                .descr = strdup((descr) ? descr : "") };
+                .descr = strdup((descr) ? descr : ""),
+                .origin = (int_data) ? "Joe's Own Editor Internal Data" : "" };
     add_var_to_list(newVar, joes_var_hash(name));
 }
 
@@ -285,4 +286,72 @@ void joes_var_unset_ref(struct joe_var *var)
 
     if(var->int_data)
         glopt(var->name, NULL, NULL, 1);
+}
+
+/* Prints all info about a joe_var to a dynamic buffer. Returns NULL on error. */
+char *joes_var_to_str(const char *name)
+{
+    return joes_var_ref_to_str(joes_get_var_by_name(name));
+}
+
+char *joes_var_value_to_str(const char *name)
+{
+    return joes_var_value_to_str_ref(joes_get_var_by_name(name));
+}
+
+char *joes_var_value_to_str_ref(struct joe_var *var)
+{
+    char *result = NULL;
+    switch(var->type)
+    {
+    case LUA_STRING:
+        result = strdup((var->str_value) ? var->str_value : _("(null)"));
+        break;
+    case LUA_REAL:
+#       define MAX_DBL_STR_SIZ 1080
+        result = (char*)malloc(MAX_DBL_STR_SIZ);
+        snprintf(result, MAX_DBL_STR_SIZ, "%f", var->num_value);
+        break;
+    case LUA_BOOL:
+        result = strdup((var->bool_value) ? _("true") : _("false"));
+        break;
+    default: /*Nil*/
+        result = strdup(_("Nil"));
+        break;
+    }
+
+    return result;
+}
+
+char *joes_var_ref_to_str(struct joe_var *var)
+{
+    if(var == NULL)
+        return NULL;
+
+    const char *type_to_str = jlua_type_to_str(var->type);
+    char *value_str = joes_var_value_to_str_ref(var);
+    size_t size = strlen(var->name) + strlen(var->descr) +
+        strlen(var->origin) + strlen(type_to_str) + strlen(value_str) +
+        sizeof(_("\n\nDescription:\nIs a variable defined in:\nIt's value Is:It's type is:\n()\n")) + 6;
+
+    char *result = (char*)joe_malloc(size);
+    result[0] = '\0'; /* strcat will write garbage to first few bytes otherwise */
+    if(result == NULL)
+        return NULL;
+
+    strcat(result, var->name);
+    strcat(result, _(" is a variable defined in: "));
+    strcat(result, var->origin);
+    strcat(result, _("\nIts value is: "));
+    strcat(result, value_str);
+    strcat(result, _(" ("));
+    strcat(result, type_to_str);
+    strcat(result, _(")\n"));
+    strcat(result, _("\n\nDescription:\n"));
+    strcat(result, var->descr);
+
+    result[size - 1] = '\0'; /* just in case ... */
+
+    free(value_str);
+    return result;
 }

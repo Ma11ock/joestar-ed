@@ -57,4 +57,7 @@ void jlua_set_var_real(const char *name, double real);
 void jlua_set_var_bool(const char *name, bool b);
 void jlua_set_var_str(const char *name, const char *str);
 
+const char *jlua_type_to_str(jlua_type type);
+
+
 #endif /* JOES_LUA_H */

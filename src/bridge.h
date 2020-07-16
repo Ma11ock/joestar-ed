@@ -31,12 +31,8 @@ struct joe_var
     bool free;                /* true if ownership (the responsibility to free()) is had by
                                  bridge.c                                                     */
     char *descr;              /* description string */
+    const char *origin;       /* Where the variable is from */
 };
-
-extern struct joe_var usermail;
-extern struct joe_var username;
-extern struct joe_var linum;
-extern struct joe_var undokeep;
 
 /* Add a variable to the map */
 void joes_add_var(const char *name, jlua_type type, bool int_data, bool global, const char *descr);
@@ -72,6 +68,14 @@ void joes_set_var_bool_ref(struct joe_var *var, bool boolean);
 bool joes_set_var_real_ref(struct joe_var *var, double real);
 void joes_var_unset(const char *name);
 void joes_var_unset_ref(struct joe_var *var);
+
+/* Prints all info about a joe_var to a dynamic buffer */
+char *joes_var_to_str(const char *name);
+char *joes_var_ref_to_str(struct joe_var *var);
+char *joes_var_value_to_str(const char *name);
+char *joes_var_value_to_str_ref(struct joe_var *var);
+
+
 /* joe_var with default values */
 extern const struct joe_var DEFAULT_JOE_VAR;
 

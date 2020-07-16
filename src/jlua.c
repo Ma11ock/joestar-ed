@@ -97,10 +97,12 @@ static const struct luaL_Reg libjoestar[] =
     { "testf" , testf }
 };
 
+#define c_descr "Joestar C Source Code"
+
 /* Internal Joestar variables. Can be set from Lua. */
 static struct joe_var *joestar_var_names[] =
 {
-    &(struct joe_var){ "linum_mode", LUA_REAL,   true,  false, NULL, false, _("Way to display line numbers.") },
+    &(struct joe_var){ "linum_mode", LUA_REAL,   true,  false, NULL, false, _("Way to display line numbers."), c_descr},
     &(struct joe_var){ "undo_keep",  LUA_REAL,   true,  true,  NULL, false, _("How many undos to keep in memory") },
     &(struct joe_var){ "eval_path",  LUA_STRING, false, false, NULL, false, _("Path to lua scripts to evaluate") },
 };
@@ -117,7 +119,7 @@ bool run_lua_from_string(const char *name)
         lua_pop(L, 1); /* pop error message */
         return false;
     }
-
+ 
     return true;
 }
 
@@ -134,7 +136,7 @@ lua_fail:
     lua_pop(L, 1); /* pop error message */
     /* TODO failstate */
 }
-
+ 
 /* Init LuaC */
 void init_lua()
 {
@@ -373,4 +375,25 @@ void jlua_get_global(const char *name, jlua_type type)
         exit(1);
         /* TODO big error */
     }
+}
+
+const char *jlua_type_to_str(jlua_type type)
+{
+    const char *result = "Nil";
+    switch(type)
+    {
+    case LUA_STRING:
+        result = "String";
+        break;
+    case LUA_REAL:
+        result = "Number";
+        break;
+    case LUA_BOOL:
+        result = "Boolean";
+        break;
+    default:
+         break;
+    }
+
+    return result;
 }
