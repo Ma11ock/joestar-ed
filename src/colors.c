@@ -306,21 +306,31 @@ SCHEME *load_scheme(const char *name)
 	char *b = NULL;
 	JFILE *f = NULL;
 	int line, i;
-	
+
 	/* Find existing */
 	for (colors = allcolors.link.next; colors != &allcolors; colors = colors->link.next) {
 		if (!zcmp(name, colors->name)) {
 			return colors;
 		}
 	}
-	
+
 	/* Find file */
 	p = getenv("HOME");
 	if (p) {
+		joe_snprintf_2(buf, SIZEOF(buf), "%s/.config/joestar/colors/%s.jcf", p, name);
+		f = jfopen(buf, "r");
+	}
+
+	if (p && !f) {
+		joe_snprintf_2(buf, SIZEOF(buf), "%s/.joestar/colors/%s.jcf", p, name);
+		f = jfopen(buf, "r");
+	}
+
+	if (p && !f) {
 		joe_snprintf_2(buf, SIZEOF(buf), "%s/.joe/colors/%s.jcf", p, name);
 		f = jfopen(buf, "r");
 	}
-	
+
 	if (!f) {
 		joe_snprintf_2(buf, SIZEOF(buf), "%scolors/%s.jcf", JOEDATA, name);
 		f = jfopen(buf, "r");
@@ -329,11 +339,11 @@ SCHEME *load_scheme(const char *name)
 		joe_snprintf_1(buf, SIZEOF(buf), "*%s.jcf", name);
 		f = jfopen(buf, "r");
 	}
-	
+
 	if (!f) {
 		return 0;
 	}
-	
+
 	/* Create */
 	colors = (SCHEME *) joe_malloc(SIZEOF(struct color_scheme));
 	colors->sets = NULL;

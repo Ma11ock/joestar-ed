@@ -119,7 +119,7 @@ bool run_lua_from_string(const char *name)
         lua_pop(L, 1); /* pop error message */
         return false;
     }
- 
+
     return true;
 }
 
@@ -136,9 +136,9 @@ lua_fail:
     lua_pop(L, 1); /* pop error message */
     /* TODO failstate */
 }
- 
+
 /* Init LuaC */
-void init_lua()
+void init_lua(void)
 {
     L = luaL_newstate();
     luaL_openlibs(L);
@@ -161,7 +161,7 @@ void init_lua()
 }
 
 /* End Lua  */
-void free_lua()
+void free_lua(void)
 {
     lua_close(L);
     L = NULL;
