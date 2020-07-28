@@ -1,4 +1,7 @@
-Theming (joe might already have this?)
+Theming 
+    themes would need to come with a colors file and a set of jsf files
+    enabling a theme will symlink all the jsf files in your syntax folder to
+    the themes' folder
 
 Lua:
     Move the joe glopts to a linked list,
