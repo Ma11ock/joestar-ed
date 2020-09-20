@@ -121,6 +121,7 @@ set(
     jlua.c
     joemain.c
     bridge.c
+    joestar.cpp
 )
 
 add_executable(

@@ -18,8 +18,10 @@ endif()
 project(joestar)
 
 enable_language(C)
+enable_language(CXX)
 enable_testing()
 set(CMAKE_C_VERSION 99)
+set(CMAKE_CXX_VERSION 17)
 cmake_policy(SET CMP0075 NEW)
 
 add_subdirectory(src)

@@ -145,13 +145,13 @@
 #define HAVE_PWD_H 1
 
 /* We have SELinux headers */
-#define HAVE_SELINUX 1
+/* #undef HAVE_SELINUX */
 
 /* Define to 1 if you have the <selinux/context.h> header file. */
-#define HAVE_SELINUX_CONTEXT_H 1
+/* #undef HAVE_SELINUX_CONTEXT_H */
 
 /* Define to 1 if you have the <selinux/selinux.h> header file. */
-#define HAVE_SELINUX_SELINUX_H 1
+/* #undef HAVE_SELINUX_SELINUX_H */
 
 /* Define to 1 if you have the `setitimer' function. */
 #define HAVE_SETITIMER 1

@@ -1,0 +1,29 @@
+* Major [0/6]
+All six of the following must be satisfied to reach a 1.0 release.
+** Theming [0/2]
+- [ ] Theme packages
+- [ ] Better joe theme integration with Bisqwit's JSF files
+** JSF [0/1]
+- [ ] Bisqwit-style JSF files
+** Lua [0/1]
+- [ ] Full lua integration (like Vim's vimscript)
+** Plugin Manager [0/2]
+- [ ] Full plugin manager (git-based)
+- [ ] Official joestar packages (like ELPA)
+** Misc [0/2]
+- [ ] Vertical split windows
+- [ ] Help and Error buffers
+** Async [0/1]
+- [ ] Asynchronous calling of help processes (like make, gcc, linter, etc)
+* Minor
+** Bugs
+- [ ] Rendering errors (might just be my terminal)
+** Misc
+- [ ] Tutorial org file
+- [ ] Put bisqwit in the jsf file
+- [ ] Redo how line numbers work internally (use enum)
+- [ ] Manage DEADJOE files by placing them into .config/joestar
+- [ ] Auto revert buffers (joe might already have this)
+- [ ] Manage backup files by placing in .config/joestar
+- [ ] CUA mode
+- [ ] modus-operandi and modus-vivendi themes
