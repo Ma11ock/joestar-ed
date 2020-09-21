@@ -244,13 +244,6 @@ check_include_file("utime.h" HAVE_UTIME_H)
 check_include_file("utmp.h" HAVE_UTMP_H)
 check_include_file("vfork.h" HAVE_VFORK_H)
 check_include_file("termcap.h" TERMINFO)
-check_include_file("lua5.3/lua.h" HAVE_LUA_H)
-check_include_file("lua5.3/lauxlib.h" HAVE_LAUXLIB_H)
-check_include_file("lua5.3/lualib.h" HAVE_LUALIB_H)
-
-if(NOT HAVE_LUA_H OR NOT HAVE_LAUXLIB_H OR NOT HAVE_LUALIB_H)
-    # TODO Error
-endif()
 
 # TODO selinux
 # Unix functions 
@@ -297,6 +290,7 @@ add_compile_definitions(SIZEOF_LONG_LONG=${SIZEOF_LONG_LONG})
 add_compile_definitions(SIZEOF_VOID_P=${SIZEOF_VOID_P})
 add_compile_definitions(SIZEOF_OFF_T=${SIZEOF_OFF_T})
 add_compile_definitions(__PROTOTYPES=1)
+
  
 add_executable(
     ${BINARY}

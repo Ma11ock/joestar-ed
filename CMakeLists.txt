@@ -17,6 +17,23 @@ endif()
 
 project(joestar)
 
+include(CMakeDetermineSystem)
+include(ExternalProject)
+
+if(JOESTAR_BUILD_LUA)
+    ExternalProject_Add(lua
+        URL "https://www.lua.org/ftp/lua-5.3.5.tar.gz"
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND make generic
+        BUILD_ALWAYS true
+        BUILD_IN_SOURCE true
+        INSTALL_COMMAND ""
+    )
+    add_library(liblua STATIC IMPORTED)
+else()
+    find_package(Lua 5.3 REQUIRED)
+endif()
+
 enable_language(C)
 enable_language(CXX)
 enable_testing()
