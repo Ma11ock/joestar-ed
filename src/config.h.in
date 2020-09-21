@@ -1,0 +1,102 @@
+#ifndef JOESTAR_CONF_H
+#define JOESTAR_CONF_H
+
+#cmakedefine HAVE_ACOS @HAVE_ACOS@
+#cmakedefine HAVE_ASIN @HAVE_ASIN@
+#cmakedefine HAVE_ATAN @HAVE_ATAN@
+#cmakedefine HAVE_ACOSH @HAVE_ACOSH@
+#cmakedefine HAVE_ASINH @HAVE_ASINH@
+#cmakedefine HAVE_ATANH @HAVE_ATANH@
+#cmakedefine HAVE_TANH @HAVE_TANH@
+#cmakedefine HAVE_SINH @HAVE_SINH@
+#cmakedefine HAVE_COSH @HAVE_COSH@
+
+#cmakedefine HAVE_J0 @HAVE_J0@
+#cmakedefine HAVE_J1 @HAVE_J1@
+#cmakedefine HAVE_CEIL @HAVE_CEIL@
+#cmakedefine HAVE_CBRT @HAVE_CBRT@
+#cmakedefine HAVE_ERFC @HAVE_ERFC@
+#cmakedefine HAVE_EXP @HAVE_EXP@
+#cmakedefine HAVE_FABS @HAVE_FABS@
+#cmakedefine HAVE_FLOOR @HAVE_FLOOR@
+#cmakedefine HAVE_HYPOT @HAVE_HYPOT@
+#cmakedefine HAVE_LOG @HAVE_LOG10@
+#cmakedefine HAVE_Y0 @HAVE_Y0@
+#cmakedefine HAVE_Y1 @HAVE_Y1@
+#cmakedefine HAVE_CURSES_H @HAVE_CURSES_H@
+#cmakedefine HAVE_DIRENT_H @HAVE_DIRENT_H@
+#cmakedefine HAVE_ERRNO_H @HAVE_ERRNO_H@
+#cmakedefine HAVE_FCNTL_H @HAVE_FCNTL_H@
+#cmakedefine HAVE_INTTYPES_H @HAVE_INTTYPES_H@
+#cmakedefine HAVE_LIBUTIL_H @HAVE_LIBUTIL_H@
+#cmakedefine HAVE_LIMITS_H @HAVE_LIMITS_H@
+#cmakedefine HAVE_LOCALE_H @HAVE_LOCALE_H@
+#cmakedefine HAVE_MEMORY_H @HAVE_MEMORY_H@
+#cmakedefine HAVE_NDIR_H @HAVE_NDIR_H@
+#cmakedefine HAVE_PATHS_H @HAVE_PATHS_H@
+#cmakedefine HAVE_TERMIOS_H @HAVE_POSIX_TERMIOS@
+#cmakedefine HAVE_PTY_H @HAVE_PTY_H@
+#cmakedefine HAVE_PWD_H @HAVE_PWD_H@
+#cmakedefine HAVE_SGTTY_H @HAVE_SGTTY_H@
+#cmakedefine HAVE_SIGNAL_H @HAVE_SIGNAL_H@
+#cmakedefine HAVE_STDDEF_H @HAVE_STDDEF_H@
+#cmakedefine HAVE_STDINT_H @HAVE_STDINT_H@
+#cmakedefine HAVE_STDLIB_H @HAVE_STDLIB_H@
+#cmakedefine HAVE_STRINGS_H @HAVE_STRINGS_H@
+#cmakedefine HAVE_STRING_H @HAVE_STRING_H@
+#cmakedefine HAVE_SYSV_TERMIO @HAVE_SYSV_TERMIO@
+#cmakedefine HAVE_SYS_DIR_H @HAVE_SYS_DIR_H@
+#cmakedefine HAVE_SYS_DIRENT_H @HAVE_SYS_DIRENT_H@
+#cmakedefine HAVE_SYS_IOCTL_H @HAVE_SYS_IOCTL_H@
+#cmakedefine HAVE_SYS_NDIR_H @HAVE_SYS_NDIR_H@
+#cmakedefine HAVE_SYS_PARAM_H @HAVE_SYS_PARAM_H@
+#cmakedefine HAVE_SYS_STAT_H @HAVE_SYS_STAT_H@
+#cmakedefine HAVE_SYS_TERMIO_H @HAVE_SYS_TERMIO_H@
+#cmakedefine HAVE_SYS_TIME_H @HAVE_SYS_TIME_H@
+#cmakedefine HAVE_SYS_TYPES_H @HAVE_SYS_TYPES_H@
+#cmakedefine HAVE_SYS_UTIME_H @HAVE_SYS_UTIME_H@
+#cmakedefine HAVE_SYS_WAIT_H @HAVE_SYS_WAIT_H@
+#cmakedefine HAVE_TERM_H @HAVE_TERM_H@
+#cmakedefine HAVE_TIME_H @HAVE_TIME_H@
+#cmakedefine HAVE_UNISTD_H @HAVE_UNISTD_H@
+#cmakedefine HAVE_UTIME_H @HAVE_UTIME_H@
+#cmakedefine HAVE_UTMP_H @HAVE_UTMP_H@
+#cmakedefine HAVE_VFORK_H @HAVE_VFORK_H@
+#cmakedefine HAVE_POSIX_TERMIOS @HAVE_POSIX_TERMIOS@
+
+#cmakedefine TERMINFO @TERMINFO@
+#cmakedefine HAVE_FORK @HAVE_FORK@
+#cmakedefine HAVE_GETCWD @HAVE_GETCWD@
+#cmakedefine HAVE_GETWD @HAVE_GETWD@
+#cmakedefine HAVE_ISBLANK @HAVE_ISBLANK@
+#cmakedefine HAVE_LOGIN_TTY @HAVE_LOGIN_TTY@
+#cmakedefine HAVE_MKDIR @HAVE_MKDIR@
+#cmakedefine HAVE_MKSTEMP @HAVE_MKSTEMP@
+#cmakedefine HAVE_OPENPTY @HAVE_OPENPTY@
+#cmakedefine HAVE_PUTENV @HAVE_PUTENV@
+#cmakedefine HAVE_SETITIMER @HAVE_SETITIMER@
+#cmakedefine HAVE_SETLOCALE @HAVE_SETLOCALE@
+#cmakedefine HAVE_SETPGID @HAVE_SETPGID@
+#cmakedefine HAVE_SIGACTION @HAVE_SIGACTION@
+#cmakedefine HAVE_SIGINTERRUPT @HAVE_SIGINTERRUPT@
+#cmakedefine HAVE_SIGPROCMASK @HAVE_SIGPROCMASK@
+#cmakedefine HAVE_SIGVEC @HAVE_SIGVEC@
+#cmakedefine HAVE_SNPRINTF @HAVE_SNPRINTF@
+#cmakedefine HAVE_STRCHR @HAVE_STRCHR@
+#cmakedefine HAVE_STRDUP @HAVE_STRDUP@
+#cmakedefine HAVE_UTIME @HAVE_UTIME@
+#cmakedefine HAVE_VFORK @HAVE_VFORK@
+
+#ifndef PARAMS
+#  ifdef PROTOTYPES
+#    define PARAMS(protos) protos
+#  else
+#    define PARAMS(protos) ()
+#  endif
+#endif
+
+/* Safe to assume C89 */
+#define RETSIGTYPE void
+#define MOUSE_XTERM 1
+
+#endif 

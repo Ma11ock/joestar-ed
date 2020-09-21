@@ -19,6 +19,7 @@ Six of the following must be satisfied to reach a 1.0 release.
 - [ ] CMAKE needs to generate autoconf.h
 - [ ] CMAKE needs to know where the install directories are (like --prefix=/usr)
 - [ ] Build instructions
+- [ ] Option to statically link Lua
 
 * Minor
 ** Bugs
@@ -33,4 +34,5 @@ Six of the following must be satisfied to reach a 1.0 release.
 - [ ] CUA mode
 - [ ] modus-operandi and modus-vivendi themes
 - [ ] Man page
+- [ ] Remove legacy
 

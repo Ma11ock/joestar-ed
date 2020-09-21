@@ -29,6 +29,7 @@ add_subdirectory(tests)
 
 # No need to set optimization levels as cmake will set the automatically depending
 # on build type.
+
 if (CMAKE_C_COMPILER_ID MATCHES "GNU")
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -D_DEFAULT_SOURCE -D_GNU_SOURCE")
 endif()
@@ -36,5 +37,6 @@ endif()
 if (CMAKE_C_COMPILER_ID MATCHES "Clang")
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -D_DEFAULT_SOURCE -D_GNU_SOURCE")
 endif()
+
 
 add_compile_definitions(JOES_TEST=1)

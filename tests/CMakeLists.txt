@@ -35,6 +35,10 @@ add_test(
     COMMAND ${BINARY}
 )
 
+include_directories(${CMAKE_BINARY_DIR}/src)
+include_directories(${CMAKE_BINARY_DIR}/src)
+
+
 # Auto run the test on make check
 add_custom_target(check COMMAND ${BINARY}
                   DEPENDS ${BINARY})
