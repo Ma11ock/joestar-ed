@@ -1,0 +1,27 @@
+#+TITLE: Joestar
+#+AUTHOR: Ryan Jeffrey
+#+EMAIL: ryan@ryanmj.xyz
+#+OPTIONS: num:nil
+
+** What
+Joestar is a fork of [[https://joe-editor.sourceforge.io/][Joe's Own Editor]] that seeks to add extensibility via [[https://www.lua.org/][Lua]]. 
+
+** Status
+It is currently in an early alpha stage.
+
+** Building
+*** Dependencies
+- A modern (C++17 and C99 compliant) version of ~gcc~ or ~clang~
+- ~cmake~ version >= 3.10
+- ~lu5.3~'s headers and libraries
+*** Steps
+#+begin_src shell
+git clone 'https://gitlab.com/Mallock/joestar'
+cd joestar
+mkdir bin
+cd bin
+cmake ..
+make -j2
+sudo make install
+#+end_src
+
