@@ -131,7 +131,6 @@ set(
 list(APPEND CMAKE_REQUIRED_LIBRARIES ncurses)
 list(APPEND CMAKE_REQUIRED_LIBRARIES m)
 list(APPEND CMAKE_REQUIRED_LIBRARIES util)
-list(APPEND CMAKE_REQUIRED_LIBRARIES lua5.3)
 
 include( CheckSymbolExists )
 include( CheckIncludeFile )
