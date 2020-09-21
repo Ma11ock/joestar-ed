@@ -122,6 +122,10 @@ set(
     joemain.c
     bridge.c
     joestar.cpp
+    # Files and dirs for installation
+    ${PROJECT_SOURCE_DIR}/syntax
+    ${PROJECT_SOURCE_DIR}/colors
+    ${PROJECT_SOURCE_DIR}/rc
 )
 
 list(APPEND CMAKE_REQUIRED_LIBRARIES ncurses)
@@ -131,6 +135,9 @@ list(APPEND CMAKE_REQUIRED_LIBRARIES lua5.3)
 
 include( CheckSymbolExists )
 include( CheckIncludeFile )
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 
 # Replacement for the autoconf.h file
 # Getting size of types
@@ -296,8 +303,6 @@ add_executable(
     ${SRC_SOURCES}
     main.c
 )
-include_directories(${CMAKE_BINARY_DIR}/src)
-include_directories(${CMAKE_BINARY_DIR}/src)
 
 add_compile_definitions(JOES_TEST=1)
 add_library(${BINARY}_lib STATIC ${SRC_SOURCES})
@@ -321,5 +326,46 @@ target_link_libraries(
     lua5.3
 )
 
+install(TARGETS ${BINARY} 
 
+        DESTINATION bin/
+        
+        PERMISSIONS
+                    OWNER_READ
+                    OWNER_WRITE
+                    OWNER_EXECUTE
+                    
+                    GROUP_READ
+                    GROUP_EXECUTE
+                    
+                    WORLD_READ
+                    WORLD_EXECUTE
+)
 
+# For the install script
+install(DIRECTORY   
+                    ${PROJECT_SOURCE_DIR}/rc
+                    ${PROJECT_SOURCE_DIR}/colors
+                    ${PROJECT_SOURCE_DIR}/syntax
+        DESTINATION etc/${BINARY}
+        
+        COMPONENT config
+        
+        DIRECTORY_PERMISSIONS 
+                                OWNER_READ 
+                                OWNER_WRITE 
+                                OWNER_EXECUTE
+                                
+                                GROUP_READ
+                                GROUP_EXECUTE
+                                
+                                WORLD_READ
+                                WORLD_EXECUTE
+        FILE_PERMISSIONS        
+                                OWNER_READ
+                                OWNER_WRITE
+                                
+                                GROUP_READ
+                                
+                                WORLD_READ
+)

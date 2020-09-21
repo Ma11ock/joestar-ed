@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.13)
 
 if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "release")
@@ -27,16 +27,5 @@ cmake_policy(SET CMP0075 NEW)
 add_subdirectory(src)
 add_subdirectory(tests)
 
-# No need to set optimization levels as cmake will set the automatically depending
-# on build type.
-
-if (CMAKE_C_COMPILER_ID MATCHES "GNU")
-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -D_DEFAULT_SOURCE -D_GNU_SOURCE")
-endif()
-
-if (CMAKE_C_COMPILER_ID MATCHES "Clang")
-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -D_DEFAULT_SOURCE -D_GNU_SOURCE")
-endif()
-
-
-add_compile_definitions(JOES_TEST=1)
+add_compile_definitions(_DEFAULT_SOURCE=1)
+add_compile_definitions(_GNU_SOURCE=1)
