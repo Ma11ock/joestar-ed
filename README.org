@@ -25,5 +25,8 @@ make -j2
 sudo make install
 #+end_src
 *** Configuration
-
+If you want to build ~lua~ along with ~joestar~ then replace the above ~cmake~ call with:
+#+begin_src shell
+cmake .. -DJOESTAR_BUILD_LUA=1
+#+end_src
 
