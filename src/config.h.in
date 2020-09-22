@@ -87,7 +87,7 @@
 #cmakedefine HAVE_UTIME @HAVE_UTIME@
 #cmakedefine HAVE_VFORK @HAVE_VFORK@
 
-#define LUA_BUILT_WITH 1
+#cmakedefine LUA_BUILT_WITH @LUA_BUILT_WITH@
 
 #ifndef PARAMS
 #  ifdef PROTOTYPES
@@ -99,6 +99,7 @@
 
 /* Safe to assume C89 */
 #define RETSIGTYPE void
+
 #define MOUSE_XTERM 1
 
 #endif 
