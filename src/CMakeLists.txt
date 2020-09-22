@@ -315,6 +315,7 @@ target_link_libraries(
     ${BINARY}_lib
 )
 
+set_target_properties(joestar PROPERTIES LINK_FLAGS_RELEASE -s)
 
 install(TARGETS ${BINARY} 
 

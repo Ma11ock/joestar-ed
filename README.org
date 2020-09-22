@@ -24,4 +24,6 @@ cmake ..
 make -j2
 sudo make install
 #+end_src
+*** Configuration
+
 
