@@ -15,10 +15,10 @@ Six of the following must be satisfied to reach a 1.0 release.
 - [ ] Help and Error buffers
 ** Async [0/1]
 - [ ] Asynchronous calling of help processes (like make, gcc, linter, etc)
-** Build [1/3]
+** Build [2/3]
 - [X] CMAKE needs to generate autoconf.h
 - [ ] Build instructions
-- [ ] Option to statically link Lua
+- [X] Option to statically link Lua
 
 * Minor
 ** Bugs

@@ -293,7 +293,6 @@ add_compile_definitions(__PROTOTYPES=1)
  
 add_executable(
     ${BINARY}
-    ${SRC_SOURCES}
     main.c
 )
 
@@ -304,7 +303,7 @@ configure_file(config.h.in config.h)
 
 # Linking
 target_link_libraries(
-    ${BINARY}
+    ${BINARY}_lib
     ncurses
     m
     util
@@ -312,12 +311,10 @@ target_link_libraries(
 )
 
 target_link_libraries(
+    ${BINARY}
     ${BINARY}_lib
-    ncurses
-    m
-    util
-    ${JSTAR_LUA_LIB}
 )
+
 
 install(TARGETS ${BINARY} 
 

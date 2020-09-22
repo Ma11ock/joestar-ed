@@ -51,7 +51,9 @@ set(CMAKE_CXX_VERSION 17)
 cmake_policy(SET CMP0075 NEW)
 
 add_subdirectory(src)
-add_subdirectory(tests)
+if("${CMAKE_BUILD_TYPE}" STREQUAL "debug")
+    add_subdirectory(tests)
+endif()
 
 add_compile_definitions(_DEFAULT_SOURCE=1)
 add_compile_definitions(_GNU_SOURCE=1)
