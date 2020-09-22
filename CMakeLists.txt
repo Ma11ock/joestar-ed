@@ -21,17 +21,24 @@ include(CMakeDetermineSystem)
 include(ExternalProject)
 
 if(JOESTAR_BUILD_LUA)
-    ExternalProject_Add(lua
+    ExternalProject_Add(lua_project
         URL "https://www.lua.org/ftp/lua-5.3.5.tar.gz"
         CONFIGURE_COMMAND ""
-        BUILD_COMMAND make generic
+        INSTALL_COMMAND make generic
         BUILD_ALWAYS true
         BUILD_IN_SOURCE true
         INSTALL_COMMAND ""
     )
-    add_library(liblua STATIC IMPORTED)
+    ExternalProject_Get_Property(lua_project install_dir)
+    set(JSTAR_LUA_LIB "lua")
+    add_library(lua STATIC IMPORTED)
+    set_property(TARGET lua PROPERTY IMPORTED_LOCATION 
+		 ${install_dir}/src/lua_project/src/liblua.a)
+    add_dependencies(lua lua_project)
+    include_directories(${install_dir}/src/lua_project/src/)
 else()
     find_package(Lua 5.3 REQUIRED)
+    set(JSTAR_LUA_LIB "lua5.3")
 endif()
 
 enable_language(C)
@@ -46,3 +53,4 @@ add_subdirectory(tests)
 
 add_compile_definitions(_DEFAULT_SOURCE=1)
 add_compile_definitions(_GNU_SOURCE=1)
+

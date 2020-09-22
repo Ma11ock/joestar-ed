@@ -10,9 +10,18 @@
 #ifndef JOES_LUA_H
 #define JOES_LUA_H
 
+/*#ifndef LUA_BUILT_WITH
 #include <lua5.3/lua.h>
 #include <lua5.3/lauxlib.h>
 #include <lua5.3/lualib.h>
+
+#else*/
+#include "lua.h"
+#include "lauxlib.h"
+#include "lualib.h"
+
+//#endif /* LUA_BUILT_WITH */
+
 #include <stdbool.h>
 
 #include "joestar.h"

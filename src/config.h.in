@@ -87,6 +87,8 @@
 #cmakedefine HAVE_UTIME @HAVE_UTIME@
 #cmakedefine HAVE_VFORK @HAVE_VFORK@
 
+#define LUA_BUILT_WITH 1
+
 #ifndef PARAMS
 #  ifdef PROTOTYPES
 #    define PARAMS(protos) protos

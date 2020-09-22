@@ -10,7 +10,7 @@ set(
     hash.h 
     help.h 
     kbd.h 
-	macro.h 
+    macro.h 
     main.h 
     menu.h 
     path.h 
@@ -20,7 +20,7 @@ set(
     qw.h 
     rc.h 
     regex.h 
-	scrn.h 
+    scrn.h 
     tab.h 
     termcapj.h 
     tty.h 
@@ -29,7 +29,7 @@ set(
     ublock.h 
     uedit.h 
     uerror.h 
-	ufile.h 
+    ufile.h 
     uformat.h 
     uisrch.h 
     umath.h 
@@ -37,7 +37,7 @@ set(
     usearch.h 
     ushell.h 
     utag.h 
-	utils.h 
+    utils.h 
     va.h 
     vfile.h 
     vs.h 
@@ -46,7 +46,7 @@ set(
     syntax.h 
     charmap.h 
     mouse.h 
-	lattr.h 
+    lattr.h 
     gettext.h 
     builtin.h 
     vt.h 
@@ -54,7 +54,7 @@ set(
     state.h 
     options.h 
     selinux.h 
-	unicode.h 
+    unicode.h 
     cclass.h 
     frag.h 
     colors.h
@@ -72,7 +72,7 @@ set(
     kbd.c 
     macro.c 
     menu.c 
-	path.c 
+    path.c 
     poshist.c 
     pw.c 
     queue.c 
@@ -82,7 +82,7 @@ set(
     scrn.c 
     tab.c 
     termcap.c 
-	tty.c 
+    tty.c 
     tw.c 
     ublock.c 
     uedit.c 
@@ -91,7 +91,7 @@ set(
     uformat.c 
     uisrch.c 
     umath.c 
-	undo.c 
+    undo.c 
     usearch.c 
     ushell.c 
     utag.c 
@@ -101,20 +101,20 @@ set(
     w.c 
     utils.c 
     syntax.c 
-	utf8.c 
+    utf8.c 
     selinux.c 
     charmap.c 
     mouse.c 
     lattr.c 
     gettext.c 
-    builtin.c 
-	builtins.c 
+    builtin.c
+    builtins.c 
     vt.c 
     mmenu.c 
     state.c 
     options.c 
     unicode.c 
-	cclass.c 
+    cclass.c 
     frag.c 
     colors.c 
     unicat-9.0.0.c
@@ -308,7 +308,7 @@ target_link_libraries(
     ncurses
     m
     util
-    lua5.3
+    ${JSTAR_LUA_LIB}
 )
 
 target_link_libraries(
@@ -316,7 +316,7 @@ target_link_libraries(
     ncurses
     m
     util
-    lua5.3
+    ${JSTAR_LUA_LIB}
 )
 
 install(TARGETS ${BINARY} 
