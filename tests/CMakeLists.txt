@@ -35,17 +35,24 @@ add_test(
     COMMAND ${BINARY}
 )
 
+include_directories(${CMAKE_BINARY_DIR}/src)
+include_directories(${CMAKE_BINARY_DIR}/src)
+
+target_compile_features(${BINARY} PRIVATE cxx_std_17)
+target_compile_features(${BINARY} PRIVATE c_std_99)
+
+
 # Auto run the test on make check
 add_custom_target(check COMMAND ${BINARY}
                   DEPENDS ${BINARY})
 
-if(CMAKE_BUILD_TYPE STREQUAL "debug")
-target_compile_options(${BINARY} PRIVATE
-     $<$<OR:$<C_COMPILER_ID:Clang>,$<C_COMPILER_ID:AppleClang>,$<C_COMPILER_ID:GNU>>:
-          -Wall -Wextra -Werror -Wconversion -Wsign-conversion>
-     $<$<C_COMPILER_ID:MSVC>:
-          /W4 /WX>)
-endif()
+#if(CMAKE_BUILD_TYPE STREQUAL "debug")
+#target_compile_options(${BINARY} PRIVATE
+#     $<$<OR:$<C_COMPILER_ID:Clang>,$<C_COMPILER_ID:AppleClang>,$<C_COMPILER_ID:GNU>>:
+#          -Wall -Wextra -Werror -Wconversion -Wsign-conversion>
+#     $<$<C_COMPILER_ID:MSVC>:
+#          /W4 /WX>)
+#endif()
 
 add_compile_definitions(JOES_TEST=1)
         

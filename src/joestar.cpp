@@ -1,15 +1,27 @@
 #include "joestar.h"
-extern "C"
-{
-#include "jlua.h"
-}
+#include "jlua.hpp"
+
+#include <iostream>
 
 void init_joestar(void)
 {
-    init_lua();
+    jlua::init();
 }
 
-void end_joestar(void)
+void free_joestar(void)
 {
-    free_lua();
+    jlua::free();
+}
+
+void jstar::log(const std::string_view msg)
+{
+}
+
+void jstar::err(const std::exception &e)
+{
+    std::cerr << e.what() << '\n';
+}
+
+void jstar::err(const std::string_view msg)
+{
 }

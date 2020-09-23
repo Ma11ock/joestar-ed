@@ -1446,7 +1446,6 @@ char *copy_buf = NULL;  /* Buffer for CUA style copying  */
 
 int cua_copy(W *w, int k)
 {
-    jlua_eval_line(w, k);
     int result = 1;
 
     /* Place into copy buffer if valid block  */

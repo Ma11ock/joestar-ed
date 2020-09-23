@@ -9,16 +9,30 @@
 #ifndef JOESTAR_H
 #define JOESTAR_H
 
+/* C interface */
 #ifdef __cplusplus
 extern "C"
 {
 #endif /* __cplusplus */
 
 void init_joestar(void);
-void end_joestar(void);
+void free_joestar(void);
 
 #ifdef __cplusplus
 }
-#endif /* __cplusplus */
+
+/* C++ specific */
+#include <stdexcept>
+#include <string_view>
+
+namespace jstar
+{
+    void log(const std::string_view msg);
+
+    void err(const std::exception &e);
+    void err(const std::string_view msg);
+}
+
+#endif // __cplusplus
 
 #endif /* JOESTAR_H */

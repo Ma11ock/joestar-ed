@@ -467,7 +467,6 @@ HASH *opt_tab;
 /* get integer value of option */
 int get_option_value(const char *name)
 {
-#ifndef JOES_TEST
     struct glopts *opt = (struct glopts *)htfind(opt_tab, name);
     if(opt == NULL)
     {
@@ -475,10 +474,6 @@ int get_option_value(const char *name)
     }
 
     return  *((int*)opt->set);
-
-#else /*TODO*/
-    return undo_keep;
-#endif /*TEST*/
 }
 
 

@@ -6,7 +6,7 @@
  * 	This file is part of JOE (Joe's Own Editor)
  */
 #include "types.h"
-#include "jlua.h"
+#include "joestar.h"
 
 #ifdef MOUSE_GPM
 #include <gpm.h>
@@ -521,7 +521,7 @@ int joe_main(int argc, char **argv, const char * const *envv)
 	if (!isatty(fileno(stdin)))
 		idleout = 0;
 
-    init_lua();
+    init_joestar();
 	for (c = 1; argv[c]; ++c) {
 		if (!strcmp(argv[c], "-help") || !strcmp(argv[c], "--help")) {
 			printf("Joestar v%s\n\n", VERSION);
@@ -721,7 +721,7 @@ int joe_main(int argc, char **argv, const char * const *envv)
 	nclose(n);
 	/* Free all modules */
 	free_ublock();
-	free_lua();
+	free_joestar();
 
 	if  (noexmsg) {
 		if (notite)
