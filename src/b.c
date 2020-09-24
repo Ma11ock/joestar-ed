@@ -300,7 +300,7 @@ B *bmk(B *prop)
 /* Eliminate a buffer */
 void brm(B *b)
 {
-	if (b && !--b->count) {
+	if (b && !--b->count && jstar_informDestroyBuffer(b)) {
 		if (b->changed)
 			abrerr(b->name);
 		if (b->locked && !b->ignored_lock && plain_file(b))

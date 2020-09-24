@@ -184,7 +184,6 @@ rc/*
 joe/util/.deps
 !rc/*.in
 !rc/ftyperc
-!rc/Makefile.am
 !rc/*.sh
 !rc/*.csh
 
@@ -202,3 +201,6 @@ src/Makefile.in
 
 src/*.lua
 src/out
+
+**/*/Makfile.in
+**/*/Makefile.am

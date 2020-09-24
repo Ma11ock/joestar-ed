@@ -6,6 +6,7 @@
  *	This file is part of JOE (Joe's Own Editor)
  */
 #include "types.h"
+#include "joestar.h"
 
 int joe_beep = 0;
 
@@ -191,6 +192,7 @@ CMD cmds[] = {
 	{"shell", TYPETW + TYPEPW + TYPEMENU + TYPEQW, ushell, NULL, 0, NULL},
 	{"showerr", TYPETW + TYPEPW, ucurrent_msg, NULL, 0, NULL},
 	{"showlog", TYPETW, ushowlog, NULL, 0, NULL},
+    {"showelog", TYPETW, ushowErrLog, NULL, 0, NULL },
 	{"shrinkw", TYPETW, ushrnk, NULL, 1, "groww"},
 	{"splitw", TYPETW, usplitw, NULL, 0, NULL},
 	{"stat", TYPETW + TYPEPW, ustat, NULL, 0, NULL},
@@ -224,7 +226,7 @@ CMD cmds[] = {
 	{"xtmouse", TYPETW+TYPEPW+TYPEMENU+TYPEQW, uxtmouse, 0, 0, 0 },
 	{"yank", TYPETW + TYPEPW + EFIXXCOL + EMOD, uyank, NULL, 1, NULL},
 	{"yapp", TYPETW + TYPEPW + EKILL, uyapp, NULL, 0, NULL},
-	{"yankpop", TYPETW + TYPEPW + EFIXXCOL + EMOD, uyankpop, NULL, 1, NULL}
+	{"yankpop", TYPETW + TYPEPW + EFIXXCOL + EMOD, uyankpop, NULL, 1, NULL},
 };
 
 /* Steal Lock dialog */

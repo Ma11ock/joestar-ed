@@ -36,4 +36,5 @@ Six of the following must be satisfied to reach a 1.0 release.
 - [ ] modus-operandi and modus-vivendi themes
 - [ ] Man page
 - [ ] Remove legacy
+- [ ] ido-search type buffer switching
 
