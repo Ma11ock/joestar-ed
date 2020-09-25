@@ -50,7 +50,6 @@ namespace jlua
         }
         catch(const std::invalid_argument &e)
         {
-            jstar::err(e);
         }
         return result;
     }

@@ -4,6 +4,7 @@ Six of the following must be satisfied to reach a 1.0 release.
 - [ ] Theme packages
 - [ ] Better joe theme integration with Bisqwit's JSF files
 ** JSF [0/1]
+*** Short term
 - [ ] Bisqwit-style JSF files
 ** Lua [0/1]
 - [ ] Full lua integration (like Vim's vimscript)
@@ -25,6 +26,7 @@ Six of the following must be satisfied to reach a 1.0 release.
 * Minor
 ** Bugs
 - [ ] Rendering errors (might just be my terminal)
+- [ ] Bisqwit's c.jsf does not parse multiline strings correctly 
 ** Misc
 - [ ] Tutorial org file
 - [ ] Put bisqwit in the jsf file
@@ -37,4 +39,14 @@ Six of the following must be satisfied to reach a 1.0 release.
 - [ ] Man page
 - [ ] Remove legacy
 - [ ] ido-search type buffer switching
+
+* Long term goals
+** Theming
+There is currently too much complexity with how different configuration languages exist in joestar. Currently, the languages are:
+- [ ] JSF Files (.jsf)
+- [ ] Color/theme (.jcf)
+- [ ] rc (joerc etc.) (these are deprecated in joestar, but aren't likely to be removed)
+- [ ] Lua
+1) The separation between the syntax files and the theme files means that the syntax files cannot make full use of the color themes. It would  be better if these were combined into a single format; a theme would provide the colors, plus means to configure the syntax highlighting state machine.
+
 
