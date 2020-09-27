@@ -56,7 +56,6 @@ namespace jstar
         B          *_copyBuf;    /* Copy buffer for displaying */
         bool        _hasCopyBuf; /* true if copyBuf is a valid
                                     pointer, false if not      */
-
     public:
         InternalBuffer();
         ~InternalBuffer() = default;

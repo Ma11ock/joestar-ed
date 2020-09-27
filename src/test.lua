@@ -1,2 +1,3 @@
-joestar = require 'init'
 
+
+joestar.undo_keep = 40

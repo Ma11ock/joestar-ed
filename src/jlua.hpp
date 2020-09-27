@@ -17,6 +17,7 @@ extern "C"
 }
 
 #include <string>
+#include <filesystem>
 
 
 namespace jlua
@@ -25,16 +26,16 @@ namespace jlua
 
     enum class type
     {
-        NIL        = LUA_TNIL,           /* Nil                  */
-        BOOL       = LUA_TBOOLEAN,       /* Boolean              */
-        LIGHTUDATA = LUA_TLIGHTUSERDATA, /* Light User data      */
-        REAL       = LUA_TNUMBER,        /* Real number (float)  */
-        STRING     = LUA_TSTRING,        /* String               */
-        TABLE      = LUA_TTABLE,         /* Table                */
-        FUNCTION   = LUA_TFUNCTION,      /* Function             */
-        USERDATA   = LUA_TUSERDATA,      /* User data            */
-        THREAD     = LUA_TTHREAD,        /* Thread               */
-        INT                              /* Integer              */
+        NIL        = LUA_TNIL,           /* Nil                       */
+        BOOL       = LUA_TBOOLEAN,       /* Boolean                   */
+        LIGHTUDATA = LUA_TLIGHTUSERDATA, /* Light User data           */
+        REAL       = LUA_TNUMBER,        /* Real number (float)       */
+        STRING     = LUA_TSTRING,        /* String                    */
+        TABLE      = LUA_TTABLE,         /* Table                     */
+        FUNCTION   = LUA_TFUNCTION,      /* Function                  */
+        USERDATA   = LUA_TUSERDATA,      /* User data                 */
+        THREAD     = LUA_TTHREAD,        /* Thread                    */
+        INT,                             /* Integer                   */
     };
 
     void init();
@@ -42,6 +43,8 @@ namespace jlua
 
     void sync_vars(std::string &name);
     void sync_vars(var &v);
+
+    bool do_file(std::filesystem::path path);
 }
 
 #endif /* JLUA_HPP */
