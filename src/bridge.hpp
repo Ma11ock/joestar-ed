@@ -13,11 +13,13 @@ extern "C"
 
 namespace jlua
 {
+    /* Get internal joe value by name */
     template<typename T>
     T getVal(std::string_view name);
-
-    template<typename T>
-    bool setVal(std::string_view name, T value);
+    /* Set internal joe value */
+    bool setVal(std::string_view name, int value);
+    bool setVal(std::string_view name, bool value);
+    bool setVal(std::string_view name, std::string_view value);
 }
 
 #endif /* JOES_BRIDGE_HPP */
